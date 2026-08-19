@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thinking in Systems — Guided Reading Companion</title>
+<style>
+  :root{
+    --text:#2c2013;
+    --bg:#faf5ea;
+    --accent:#a8461f;
+    --accent-dark:#832f11;
+    --accent-soft:#f3e0cf;
+    --border:#e6dbc4;
+    --card-bg:#fffcf5;
+    --muted:#7a6a54;
+    --success:#4d6b3f;
+    --success-soft:#e6ecdc;
+    --warn:#95591c;
+    --warn-soft:#f3e6c9;
+    --serif: Palatino, "Palatino Linotype", "Iowan Old Style", "Book Antiqua", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--serif);
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 80px;}
+  a{color:var(--accent);}
+
+  /* Header */
+  header.page-header{margin-bottom:36px;}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);
+    font-size:12.5px;font-weight:600;letter-spacing:.02em;
+    padding:5px 12px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent-dark);
+    border:1px solid #e3c8a8;
+  }
+  .badge.muted{background:#f2ede0;color:var(--muted);border-color:var(--border);}
+  .badge.success{background:var(--success-soft);color:#3d5732;border-color:#cfdcc0;}
+
+  h1{font-size:clamp(1.9rem,3.4vw,2.5rem);margin:0 0 4px;letter-spacing:-.01em;font-weight:600;font-style:italic;}
+  .subtitle{color:var(--muted);font-size:1.05rem;margin:0 0 14px;font-style:italic;}
+  .citation{
+    font-size:.88rem;color:var(--muted);font-family:var(--sans);
+    border-left:3px solid var(--accent-soft);padding-left:12px;margin-bottom:22px;
+  }
+  .overview p{margin:0 0 12px;font-size:.98rem;}
+  .overview{margin-bottom:18px;}
+
+  .privacy-note{
+    display:flex;gap:10px;align-items:flex-start;
+    background:var(--card-bg);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:8px;padding:12px 14px;font-size:.87rem;color:var(--muted);margin-bottom:8px;
+  }
+  .privacy-note strong{color:var(--text);}
+
+  /* Reading level toggle */
+  .level-picker{
+    display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:18px 0 22px;
+    font-family:var(--sans);
+  }
+  .level-picker .lp-label{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+  .level-group{display:inline-flex;background:var(--accent-soft);border:1px solid #e3c8a8;border-radius:999px;padding:3px;gap:2px;}
+  .level-btn{
+    appearance:none;border:none;background:transparent;cursor:pointer;
+    font-family:var(--sans);font-size:.82rem;font-weight:600;color:var(--accent-dark);
+    padding:6px 14px;border-radius:999px;transition:background .15s,color .15s;
+  }
+  .level-btn:hover{background:#eccbaa;}
+  .level-btn[aria-pressed="true"]{background:var(--accent);color:#fffaf0;}
+  .level-btn:focus-visible{outline:2px solid var(--accent-dark);outline-offset:2px;}
+
+  /* Learning outcomes */
+  .lo-section{margin:30px 0 38px;}
+  .lo-section h2{font-size:1.15rem;margin:0 0 4px;}
+  .lo-section .lo-sub{color:var(--muted);font-size:.88rem;margin:0 0 16px;}
+  .lo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;}
+  .lo-card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:10px;
+    padding:14px 16px;font-size:.88rem;
+  }
+  .lo-card .lo-tag{
+    display:inline-block;font-family:var(--sans);font-size:11px;font-weight:700;color:var(--accent-dark);
+    background:var(--accent-soft);border-radius:5px;padding:2px 7px;margin-bottom:8px;
+    letter-spacing:.04em;
+  }
+  .lo-card .lo-verb{font-weight:700;color:var(--text);}
+
+  /* Tabs */
+  .tabs{
+    display:flex;gap:4px;border-bottom:2px solid var(--border);
+    overflow-x:auto;margin-bottom:24px;-ms-overflow-style:none;scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab-btn{
+    appearance:none;border:none;background:transparent;cursor:pointer;
+    font-family:var(--sans);font-size:.88rem;font-weight:600;color:var(--muted);
+    padding:11px 16px;white-space:nowrap;border-bottom:2px solid transparent;
+    margin-bottom:-2px;transition:color .15s, border-color .15s;
+  }
+  .tab-btn:hover{color:var(--accent-dark);}
+  .tab-btn[aria-selected="true"]{color:var(--accent-dark);border-bottom-color:var(--accent);}
+  .tab-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;}
+  .tab-meta{display:block;font-weight:400;font-size:10.5px;color:var(--muted);margin-top:2px;letter-spacing:.02em;}
+
+  .panel{animation:fade .15s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
+  .panel h2{font-size:1.3rem;margin:0 0 6px;}
+  .panel .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 22px;}
+
+  /* Generic cards */
+  .card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:10px;
+    padding:18px 20px;margin-bottom:14px;
+  }
+  .card h3{margin:0 0 8px;font-size:1.02rem;}
+  .card p{margin:0 0 8px;font-size:.92rem;}
+  .card p:last-child{margin-bottom:0;}
+
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:24px;}
+
+  .theme-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .theme-list li{
+    display:flex;gap:12px;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;
+    padding:12px 14px;font-size:.9rem;
+  }
+  .theme-num{
+    flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;
+  }
+
+  .tension-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin-bottom:24px;}
+  .tension-col{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+  .tension-col h4{margin:0 0 8px;font-size:.95rem;}
+  .tension-col ul{margin:0;padding-left:18px;font-size:.87rem;}
+  .tension-col li{margin-bottom:5px;}
+  .tension-vs{
+    display:flex;align-items:center;justify-content:center;padding:0 14px;
+    font-weight:700;color:var(--muted);font-size:.8rem;
+  }
+  @media(max-width:680px){
+    .tension-grid{grid-template-columns:1fr;}
+    .tension-vs{padding:8px 0;}
+  }
+
+  /* Leverage points */
+  .leverage-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px;}
+  .leverage-item{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .leverage-toggle{
+    width:100%;display:flex;align-items:center;gap:14px;text-align:left;
+    background:transparent;border:none;cursor:pointer;padding:14px 16px;font-family:var(--sans);
+  }
+  .leverage-rank{
+    flex:0 0 auto;width:34px;height:34px;border-radius:8px;background:var(--accent-soft);color:var(--accent-dark);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;
+  }
+  .leverage-toggle .lt-title{flex:1;font-weight:600;font-size:.94rem;color:var(--text);}
+  .leverage-toggle .lt-icon{color:var(--muted);transition:transform .15s;font-size:.8rem;}
+  .leverage-item[data-open="true"] .lt-icon{transform:rotate(180deg);}
+  .leverage-body{padding:0 16px 16px 64px;font-size:.88rem;}
+  .leverage-body p{margin:0 0 8px;}
+  .leverage-body .lb-label{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-dark);display:block;margin-bottom:3px;}
+  .leverage-effectiveness{
+    font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:8px;white-space:nowrap;
+  }
+  .eff-low{background:#f2ede0;color:var(--muted);}
+  .eff-mid{background:var(--warn-soft);color:var(--warn);}
+  .eff-high{background:var(--success-soft);color:#3d5732;}
+
+  /* Close reading concept cards */
+  .concept-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;}
+  .concept-head{padding:14px 18px;border-bottom:1px solid var(--border);background:#f5efe1;}
+  .concept-head h3{margin:0;font-size:1rem;}
+  .concept-cols{display:grid;grid-template-columns:1fr 1fr;}
+  .concept-col{padding:16px 18px;font-size:.88rem;}
+  .concept-col:first-child{border-right:1px solid var(--border);}
+  .concept-col .col-label{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);display:block;margin-bottom:8px;}
+  @media(max-width:680px){
+    .concept-cols{grid-template-columns:1fr;}
+    .concept-col:first-child{border-right:none;border-bottom:1px solid var(--border);}
+  }
+  .loop-svg{display:block;margin:6px auto 12px;max-width:220px;width:100%;}
+
+  /* Reflection */
+  .reflection-item{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:16px;}
+  .reflection-item .rq-tag{font-family:var(--sans);font-size:11px;font-weight:700;color:var(--accent-dark);background:var(--accent-soft);padding:2px 8px;border-radius:5px;letter-spacing:.03em;}
+  .reflection-item p.prompt{margin:8px 0 12px;font-size:.94rem;font-weight:600;}
+  textarea{
+    width:100%;min-height:110px;resize:vertical;font-family:var(--sans);font-size:.9rem;
+    border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);
+    background:#f5efe1;
+  }
+  textarea:focus{outline:2px solid var(--accent);outline-offset:1px;background:var(--card-bg);}
+  .reflection-actions{display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px;}
+  .save-status{font-family:var(--sans);font-size:.76rem;color:var(--muted);}
+  .btn{
+    appearance:none;border:1px solid var(--border);background:var(--card-bg);color:var(--text);font-family:var(--sans);
+    font-family:inherit;font-size:.82rem;font-weight:600;padding:7px 13px;border-radius:7px;cursor:pointer;
+    transition:background .15s, border-color .15s;
+  }
+  .btn:hover{border-color:var(--accent);color:var(--accent-dark);}
+  .btn.btn-copy[data-copied="true"]{background:var(--success-soft);border-color:#cfdcc0;color:#3d5732;}
+
+  /* Glossary */
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;}
+  .term-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:13px 15px;}
+  .term-card dt{font-weight:700;font-size:.88rem;margin-bottom:4px;color:var(--text);}
+  .term-card dd{margin:0;font-size:.83rem;color:var(--muted);}
+  .glossary-group-title{font-family:var(--sans);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:26px 0 10px;}
+  .glossary-group-title:first-child{margin-top:0;}
+
+  footer.page-footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--border);font-size:.78rem;color:var(--muted);text-align:center;}
+</style>
+</head>
+<body data-module="thinking-in-systems-meadows">
+<div class="wrap">
+
+  <header class="page-header">
+    <div class="badges">
+      <span class="badge">Systems Thinking · Nonfiction Primer</span>
+      <span class="badge muted" id="audience-badge">Undergraduate &amp; Graduate · Systems, Sustainability, Policy, Data &amp; Data Science</span>
+      <span class="badge success">5 Learning Outcomes</span>
+    </div>
+    <h1>Thinking in Systems: A Primer</h1>
+    <p class="subtitle">A Guided Reading Companion</p>
+    <p class="citation">
+      Donella H. Meadows · edited by Diana Wright · Chelsea Green Publishing, 2008
+      (drawn from a manuscript circulated by the Sustainability Institute since 1993)
+    </p>
+
+    <div class="level-picker">
+      <span class="lp-label">Reading Level</span>
+      <div class="level-group" role="group" aria-label="Reading level">
+        <button type="button" class="level-btn" data-level="intro" aria-pressed="false">Intro / High School</button>
+        <button type="button" class="level-btn" data-level="undergrad" aria-pressed="true">Undergrad / Grad</button>
+        <button type="button" class="level-btn" data-level="exec" aria-pressed="false">Executive / Professional</button>
+      </div>
+    </div>
+
+    <div class="overview">
+      <p id="overview-p1"></p>
+      <p id="overview-p2"></p>
+    </div>
+
+    <div class="privacy-note">
+      <span>🔒</span>
+      <span><strong>Your answers stay on this device.</strong> Everything you type in Tab 4 is saved only
+      to your browser's local storage on this page — nothing is sent to a server, an instructor, or any
+      third party unless you explicitly copy and submit it yourself.</span>
+    </div>
+  </header>
+
+  <section class="lo-section">
+    <h2>Learning Outcomes</h2>
+    <p class="lo-sub">By the end of this module, you should be able to:</p>
+    <div class="lo-grid">
+      <div class="lo-card">
+        <span class="lo-tag">LO1</span>
+        <p id="lo1-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO2</span>
+        <p id="lo2-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO3</span>
+        <p id="lo3-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO4</span>
+        <p id="lo4-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO5</span>
+        <p id="lo5-text"></p>
+      </div>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="Module sections">
+    <button class="tab-btn" role="tab" id="tab-btn-1" aria-controls="tab-1" aria-selected="true" tabindex="0">
+      Core Framework<span class="tab-meta">Supports LO1 · LO2</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-2" aria-controls="tab-2" aria-selected="false" tabindex="-1">
+      Leverage Points<span class="tab-meta">Supports LO3 · LO5</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-3" aria-controls="tab-3" aria-selected="false" tabindex="-1">
+      Close Reading<span class="tab-meta">Supports LO2 · LO4</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-4" aria-controls="tab-4" aria-selected="false" tabindex="-1">
+      Reflection<span class="tab-meta">Supports LO3 · LO5</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-5" aria-controls="tab-5" aria-selected="false" tabindex="-1">
+      Glossary<span class="tab-meta">Supports all LOs</span>
+    </button>
+  </nav>
+
+  <!-- TAB 1 : CORE FRAMEWORK -->
+  <section class="panel" id="tab-1" role="tabpanel" aria-labelledby="tab-btn-1" tabindex="0">
+    <h2>Core Framework &amp; Mental Models</h2>
+    <p class="panel-sub">The vocabulary Meadows builds in Part One, and the central tension the whole book argues from.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>System</h3>
+        <p>A set of <strong>elements</strong> interconnected in a way that produces its own pattern of
+        behavior over time. A system is more than the sum of its parts — it has a
+        <strong>function or purpose</strong>, often unstated, that can only be inferred from watching what
+        the system actually does.</p>
+      </div>
+      <div class="card">
+        <h3>Stock</h3>
+        <p>The memory of a system: an accumulation you could measure at an instant — water in a bathtub,
+        money in an account, trust in a relationship, CO₂ in the atmosphere. Stocks change slowly and
+        absorb shocks, which is why they give a system stability and inertia.</p>
+      </div>
+      <div class="card">
+        <h3>Flow</h3>
+        <p>The rate that fills or drains a stock. Every stock has at least one <strong>inflow</strong> and
+        one <strong>outflow</strong>; the stock's level at any moment is the accumulated difference between
+        them, not the flows themselves.</p>
+      </div>
+      <div class="card">
+        <h3>Feedback Loop</h3>
+        <p>A closed chain of causal connections where a stock's level influences a flow, which in turn
+        changes the stock. <strong>Balancing loops</strong> seek a goal and stabilize; <strong>reinforcing
+        loops</strong> amplify whatever direction they're already moving in.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">The Central Tension: Clockwork World vs. System World</h3>
+    <div class="tension-grid">
+      <div class="tension-col">
+        <h4>The Mechanical / Reductionist View</h4>
+        <ul>
+          <li>The world is a machine: understand each part, and you understand the whole.</li>
+          <li>Behavior is linear and proportional — a bigger cause produces a bigger effect.</li>
+          <li>Problems have a single, identifiable cause and a single fix.</li>
+          <li>Control comes from pulling the right lever hard enough.</li>
+        </ul>
+      </div>
+      <div class="tension-vs">VS</div>
+      <div class="tension-col">
+        <h4>Meadows's Systems View</h4>
+        <ul>
+          <li>The whole has properties none of its parts have alone — behavior emerges from structure.</li>
+          <li>Delays and nonlinearities mean small causes can have large effects, and vice versa.</li>
+          <li>Problems usually have many interacting causes and resist single fixes (policy resistance).</li>
+          <li>Durable change comes from shifting structure, information, or paradigm — not force.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">Five Guiding Themes to Track While You Read</h3>
+    <ul class="theme-list">
+      <li><span class="theme-num">1</span><span><strong>Stocks are the system's memory.</strong> Because they change slowly and buffer sudden swings, the stock — not the flow of the moment — is usually what you should be managing.</span></li>
+      <li><span class="theme-num">2</span><span><strong>Behavior is a function of structure, not blame.</strong> When a system misbehaves, Meadows's first move is always to ask what structure produces that behavior, not who is at fault.</span></li>
+      <li><span class="theme-num">3</span><span><strong>Delays cause oscillation and overshoot.</strong> The longer the gap between an action and its feedback, the more likely a system is to overcorrect.</span></li>
+      <li><span class="theme-num">4</span><span><strong>Revealed goals beat stated goals.</strong> A system's true purpose is whatever it actually optimizes for in practice, regardless of its mission statement.</span></li>
+      <li><span class="theme-num">5</span><span><strong>Nonlinearity breaks proportional thinking.</strong> Watch for thresholds and tipping points where a small additional cause produces a disproportionate effect.</span></li>
+    </ul>
+  </section>
+
+  <!-- TAB 2 : LEVERAGE POINTS -->
+  <section class="panel" id="tab-2" role="tabpanel" aria-labelledby="tab-btn-2" tabindex="0" hidden>
+    <h2>The Twelve Leverage Points</h2>
+    <p class="panel-sub">Chapter 6's ranked places to intervene in a system — click each to expand the analysis and how to apply it. Ordered from <strong>least</strong> to <strong>most</strong> effective, as Meadows ranks them.</p>
+
+    <div class="leverage-list" id="leverage-list"></div>
+  </section>
+
+  <!-- TAB 3 : CLOSE READING -->
+  <section class="panel" id="tab-3" role="tabpanel" aria-labelledby="tab-btn-3" tabindex="0" hidden>
+    <h2>Close Reading &amp; Technical Deep Dive</h2>
+    <p class="panel-sub">A slower, side-by-side pass on the mechanics that make the rest of the book work.</p>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>1. Feedback Loop Mechanics — Reinforcing vs. Balancing</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <svg class="loop-svg" viewBox="0 0 200 140" aria-hidden="true">
+            <circle cx="100" cy="70" r="46" fill="none" stroke="#a8461f" stroke-width="3"/>
+            <path d="M100 24 A46 46 0 0 1 143 60" fill="none" stroke="#a8461f" stroke-width="3" marker-end="url(#arrow)"/>
+            <text x="100" y="74" text-anchor="middle" font-size="12" fill="#2c2013" font-family="sans-serif" font-weight="700">Stock</text>
+            <text x="152" y="64" font-size="16" fill="#a8461f" font-family="sans-serif" font-weight="800">+</text>
+            <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#a8461f"/></marker></defs>
+          </svg>
+          <p><strong>Reinforcing loop (R):</strong> the more you have, the more you get — compounding
+          interest, population growth, a viral post, an arms race. Left alone, it drives exponential
+          growth or exponential collapse. It never seeks a target; it just amplifies.</p>
+          <p><strong>Balancing loop (B):</strong> a thermostat, a predator-prey cycle, blood-sugar
+          regulation. It compares the stock to a goal and pushes a flow to close the gap — this is what
+          gives a system stability and a "setpoint."</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>Loop polarity is determined by counting sign inversions around the loop: an even number of
+          negative links (or zero) makes the loop <strong>reinforcing (+)</strong>; an odd number makes it
+          <strong>balancing (−)</strong>. Most real systems contain several loops of both kinds operating
+          simultaneously; which one <em>dominates</em> at a given moment determines the system's visible
+          behavior, and dominance can shift as stocks change.</p>
+          <p>A reinforcing loop is inherently unstable — nothing inside it stops the growth. In practice,
+          every reinforcing loop eventually runs into a balancing loop (a resource limit, a carrying
+          capacity, a saturation point) that was there all along but wasn't dominant yet.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>2. System Traps — Tragedy of the Commons &amp; Shifting the Burden</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <p><strong>Tragedy of the Commons:</strong> a shared, unregulated resource (a fishery, an aquifer,
+          the atmosphere) gets used by many independent actors, each of whom benefits individually from
+          taking a little more, while the cost of depletion is spread across everyone. Every rational
+          individual choice adds up to a collectively irrational outcome.</p>
+          <p><strong>Shifting the Burden to the Intervenor (Addiction):</strong> a quick fix relieves a
+          symptom without touching the underlying problem. Over time, reliance on the quick fix atrophies
+          the system's own capacity to solve the real problem, so more of the fix is needed just to stay
+          even.</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>The commons trap is a structural mismatch: each user's <em>individual</em> reinforcing loop
+          (more extraction → more short-term benefit) runs faster and is more visible than the
+          <em>collective</em> balancing loop (depletion → scarcity → everyone loses), which is slow, diffuse,
+          and delayed. Fix: make the collective cost visible and immediate to the individual — quotas,
+          pricing, or restored communication among users (Elinor Ostrom's commons-governance research,
+          which Meadows cites approvingly, shows self-governed commons can avoid this trap).</p>
+          <p>The addiction trap is a two-loop structure: a fast balancing loop (the quick fix) sits next to
+          a slow balancing loop (the real, structural fix). Because the fast loop's feedback arrives first,
+          it gets reinforced through use while the slow loop's own capacity erodes from disuse — e.g.,
+          disaster relief that becomes a substitute for building local resilience.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>3. Delays, Overshoot, and Oscillation</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <p>When there's a lag between taking an action and seeing its effect, decision-makers tend to
+          keep pushing past the point where the system has already started to respond — because the
+          feedback telling them to stop hasn't arrived yet. The system overshoots its target, corrects,
+          overshoots the other way, and oscillates. Commodity price cycles, real-estate boom-and-bust, and
+          algae blooms followed by die-offs all follow this pattern.</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>The severity of oscillation scales with the ratio of delay length to the system's natural rate
+          of change (this is leverage point #9 in Tab 2). A short delay relative to the system's response
+          time produces smooth convergence to a goal; a long delay produces widening oscillations that can
+          destabilize the system entirely. Counterintuitively, Meadows warns that reacting <em>faster</em>
+          to a laggy signal often makes oscillation worse, not better — the fix is usually to shorten the
+          delay itself (better/faster information) rather than to react more aggressively to stale
+          information.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4 : REFLECTION -->
+  <section class="panel" id="tab-4" role="tabpanel" aria-labelledby="tab-btn-4" tabindex="0" hidden>
+    <h2>Reflection &amp; Synthesis Exercises</h2>
+    <p class="panel-sub">Apply the framework to a real system. Your answers autosave to this browser as you type.</p>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 1 · Supports LO1</span>
+      <p class="prompt" id="prompt1"></p>
+      <textarea data-key="reflect1" aria-label="Reflection 1 response" placeholder="e.g., Stock: subscribers on the platform. Inflow: new sign-ups. Outflow: churn. Balancing loop: as churn rises, the company invests more in retention features, which slows churn..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect1">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect1"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 2 · Supports LO4</span>
+      <p class="prompt" id="prompt2"></p>
+      <textarea data-key="reflect2" aria-label="Reflection 2 response" placeholder="e.g., This looks like 'success to the successful' — the algorithm gives more visibility to already-popular creators, which earns them more engagement, which earns them more visibility..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect2">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect2"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 3 · Supports LO5</span>
+      <p class="prompt" id="prompt3"></p>
+      <textarea data-key="reflect3" aria-label="Reflection 3 response" placeholder="Low-leverage: raise the price of the subsidized resource by 10%. High-leverage: change who owns the resource, or what the system is optimizing for in the first place..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect3">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect3"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 4 · Supports LO2 · LO3</span>
+      <p class="prompt" id="prompt4"></p>
+      <textarea data-key="reflect4" aria-label="Reflection 4 response" placeholder="Name the story, who's being blamed, and the underlying stock/flow/feedback structure you think is actually driving the outcome..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect4">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect4"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 5 : GLOSSARY -->
+  <section class="panel" id="tab-5" role="tabpanel" aria-labelledby="tab-btn-5" tabindex="0" hidden>
+    <h2>Reference &amp; Glossary</h2>
+    <p class="panel-sub">Core terms, system traps, and reference concepts used throughout the module.</p>
+
+    <div class="glossary-group-title">Core Vocabulary</div>
+    <div class="glossary-grid">
+      <div class="term-card"><dt>System</dt><dd>Elements interconnected in a way that produces a pattern of behavior and serves a (often unstated) function or purpose.</dd></div>
+      <div class="term-card"><dt>Element</dt><dd>A visible, tangible part of a system — often the easiest part to notice and the least useful place to intervene.</dd></div>
+      <div class="term-card"><dt>Interconnection</dt><dd>The relationships and information flows that bind elements together and are usually more important than the elements themselves.</dd></div>
+      <div class="term-card"><dt>Purpose / Function</dt><dd>What a system actually does, inferred from its behavior — not what it claims to do in a mission statement.</dd></div>
+      <div class="term-card"><dt>Stock</dt><dd>An accumulation measurable at a point in time; the memory and stabilizing element of a system.</dd></div>
+      <div class="term-card"><dt>Flow (Inflow / Outflow)</dt><dd>The rate that adds to or drains a stock over time.</dd></div>
+      <div class="term-card"><dt>Feedback Loop</dt><dd>A closed causal chain where a stock's level affects a flow that changes the stock.</dd></div>
+      <div class="term-card"><dt>Balancing Feedback Loop</dt><dd>A goal-seeking loop that opposes deviation from a target and stabilizes a stock.</dd></div>
+      <div class="term-card"><dt>Reinforcing Feedback Loop</dt><dd>A self-amplifying loop that drives exponential growth or collapse with no built-in target.</dd></div>
+      <div class="term-card"><dt>Delay</dt><dd>The lag between an action and its feedback; a major cause of oscillation and overshoot.</dd></div>
+      <div class="term-card"><dt>Nonlinearity</dt><dd>A relationship where cause and effect are not proportional — small inputs can have large effects, and vice versa.</dd></div>
+      <div class="term-card"><dt>Resilience</dt><dd>A system's capacity to recover after being disturbed, distinct from stability (staying near a setpoint) or static structure.</dd></div>
+      <div class="term-card"><dt>Self-Organization</dt><dd>A system's capacity to change its own structure, add new elements, or evolve without outside direction.</dd></div>
+      <div class="term-card"><dt>Hierarchy</dt><dd>Nested subsystems within larger systems; each level has its own goals that should serve, not override, the whole.</dd></div>
+      <div class="term-card"><dt>Leverage Point</dt><dd>A place within a system's structure where a small shift can produce a large change in behavior.</dd></div>
+      <div class="term-card"><dt>Bounded Rationality</dt><dd>Actors make locally reasonable decisions with the information available to them, even when the collective result is dysfunctional.</dd></div>
+    </div>
+
+    <div class="glossary-group-title">System Traps (and Opportunities)</div>
+    <div class="glossary-grid">
+      <div class="term-card"><dt>Policy Resistance</dt><dd>Multiple actors pull a stock toward their own preferred targets; the harder each pushes, the harder the others push back, and the stock barely moves.</dd></div>
+      <div class="term-card"><dt>Tragedy of the Commons</dt><dd>A shared resource is depleted because the collective cost of overuse is diffuse and delayed while the individual benefit is immediate.</dd></div>
+      <div class="term-card"><dt>Drift to Low Performance</dt><dd>Goals are quietly lowered to match past poor performance, creating a reinforcing spiral of declining standards.</dd></div>
+      <div class="term-card"><dt>Escalation</dt><dd>Two competing reinforcing loops feed off each other's output (an arms race, a bidding war), driving unbounded growth in the competition itself.</dd></div>
+      <div class="term-card"><dt>Success to the Successful</dt><dd>Whoever is winning gets more of the resource needed to keep winning, driving out competitors regardless of merit.</dd></div>
+      <div class="term-card"><dt>Shifting the Burden / Addiction</dt><dd>A fast symptomatic fix is used repeatedly, weakening the system's own slower capacity to solve the underlying problem.</dd></div>
+      <div class="term-card"><dt>Rule Beating</dt><dd>Actors technically comply with a rule's letter while defeating its intent, often producing worse outcomes than no rule at all.</dd></div>
+      <div class="term-card"><dt>Seeking the Wrong Goal</dt><dd>A system faithfully and efficiently optimizes for a stated or measured goal that doesn't actually match the outcome anyone wants.</dd></div>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    Guided Reading Companion · <em>Thinking in Systems: A Primer</em>, Donella H. Meadows (Chelsea Green, 2008) · Answers stored locally in your browser only.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var moduleSlug = document.body.getAttribute("data-module");
+
+  /* ---------- Reading level content ---------- */
+  var levelContent = {
+    intro: {
+      audienceBadge: "Intro / High School · Systems Thinking Basics",
+      overviewP1: "<em>Thinking in Systems</em> is a short, non-technical book that teaches you to see the hidden “wiring” behind everyday things — like why a bathtub doesn’t overflow the instant you turn on the tap, or why traffic jams appear even when everyone is trying to drive safely. Donella Meadows, a scientist who helped invent this way of thinking, shows that almost anything — a school, a video game economy, a fishery — behaves the way it does because of its <strong>structure</strong>, not because any one person is doing something wrong.",
+      overviewP2: "This page is a study guide to use next to the book, not a replacement for it. Work through the tabs in order: first the vocabulary, then a ranked list of ways to actually change a system, then two close-up examples, then some questions to try in your own words, and finally a glossary you can check any time.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the ideas of “stock,” “flow,” and “feedback loop” using an everyday example, like a bathtub or a phone battery.",
+      lo2: "<span class=\"lo-verb\">Trace</span> how a loop that reinforces itself (like a rumor spreading) or a loop that balances itself (like a thermostat) causes things to speed up, slow down, or level off over time.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> between a fix that only treats a symptom and a fix that changes the actual structure causing a problem.",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> a situation from your own life or the news using Meadows’s list of “system traps” to see which one is happening.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> one small idea and one big idea for fixing a system you care about, using Meadows’s list of leverage points.",
+      prompt1: "Pick something from your own life — your phone’s battery, your allowance, your closet — and name its stock (what’s building up or draining), its inflow and outflow, and one feedback loop you notice.",
+      prompt2: "Using the same example, look at the glossary in Tab 5. Which “system trap” best matches what’s happening, and why?",
+      prompt3: "Think of one small change (like adjusting a number) and one big change (like changing a rule or a goal) you could make to your system. Which one do you think would actually last?",
+      prompt4: "Find a story in the news where someone is being blamed for a problem. Can you think of a “system” reason instead of a “person” reason for why it happened?"
+    },
+    undergrad: {
+      audienceBadge: "Undergraduate &amp; Graduate · Systems, Sustainability, Policy, Data &amp; Data Science",
+      overviewP1: "<em>Thinking in Systems</em> is Donella Meadows's attempt to make the discipline of system dynamics — the field she helped found at MIT — legible without equations. The book argues that the behavior of almost everything you interact with (a household budget, a corporation, an ecosystem, a national economy) is produced by <strong>structure</strong>: a small set of stocks, flows, and feedback loops, not by the intentions or blame-worthiness of the people inside it. Meadows spends the first half of the book building this vocabulary from scratch, then spends the second half showing how systems misbehave (the \"system traps\") and where a person can actually intervene to change an outcome (the \"leverage points\"), ranked from the least effective place to push to the most effective.",
+      overviewP2: "This module is built to be used <strong>alongside the text, not instead of it</strong>. Tab 1 gives you the vocabulary and the mental-model tension the whole book turns on. Tab 2 walks the twelve leverage points as an interactive, ranked sequence you can click through. Tab 3 does a closer, side-by-side technical read of feedback-loop mechanics and two of the system traps. Tab 4 asks you to apply all of it to a real system of your choosing, and Tab 5 is a standing glossary you can return to. Work through the tabs in order the first time; after that, jump to whichever one you need.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the vocabulary of stocks, flows, and feedback loops from a plain-language description of a real system.",
+      lo2: "<span class=\"lo-verb\">Trace</span> how the structure of reinforcing and balancing feedback loops — including delays and nonlinearities — produces a system's behavior over time.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> between shallow, symptom-level fixes and structural leverage points when diagnosing a persistent problem.",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> a contemporary case against Meadows's system traps to identify which trap(s) are operating and why.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> an intervention proposal for a system of your choosing, ranked using Meadows's twelve leverage points.",
+      prompt1: "Pick a system you're actually part of — your job, a subscription service, a supply chain, a social media platform, a household. Name its key stocks, its inflows/outflows, and at least one feedback loop (state whether it's reinforcing or balancing and why).",
+      prompt2: "In that same system, identify a system trap from Tab 5's glossary that appears to be operating (e.g., tragedy of the commons, policy resistance, shifting the burden, escalation, success to the successful). Which trap fits best, and what evidence makes you say so?",
+      prompt3: "Using the twelve leverage points from Tab 2, propose one <strong>low-leverage</strong> fix (adjusting a parameter or number) and one <strong>high-leverage</strong> fix (changing a goal, rule, or the paradigm behind the system) for the same system. Say which one you think would actually hold up over time, and why.",
+      prompt4: "Meadows argues that blaming individual actors is usually a mistake — behavior comes from structure. Find a current news story where people are blaming an individual or a group for something that looks, on closer inspection, like a structural or system problem. What structure is actually producing the outcome?"
+    },
+    exec: {
+      audienceBadge: "Executive / Professional · Strategy, Operations &amp; Organizational Design",
+      overviewP1: "<em>Thinking in Systems</em> is Donella Meadows's field guide to structural thinking — a way of diagnosing why an organization, market, or supply chain keeps producing the same result no matter who's in charge or how hard people work. Her core claim, drawn from decades of system dynamics research at MIT, is that outcomes are driven by <strong>structure</strong> (stocks, flows, and feedback loops), not by individual performance — which is why so many well-intentioned initiatives fail to move the needle.",
+      overviewP2: "Use this page as a working reference alongside the book, not a substitute for it. Tab 1 gives you the vocabulary to name what you're seeing in your own organization. Tab 2 is the highest-value tab for practitioners: a ranked list of where an intervention actually sticks versus where it just burns budget. Tabs 3 and 5 back that up with mechanics and terminology; Tab 4 is where you apply it to a system you actually manage.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the stock/flow/feedback-loop vocabulary well enough to translate it directly onto a business process, org chart, or supply chain you operate.",
+      lo2: "<span class=\"lo-verb\">Trace</span> how reinforcing and balancing feedback loops — and the delays inside them — explain a recurring performance pattern in your own organization (e.g., a demand spike, a hiring cycle, a churn curve).",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> between initiatives that treat a symptom (a new dashboard, a one-off incentive) and initiatives that change structural leverage (incentive design, information flow, decision rights).",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> a current initiative or market dynamic in your organization against Meadows's system traps to identify which trap is quietly undermining it.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> a leverage-ranked intervention memo for a system you own, distinguishing a quick parameter fix from a structural, higher-leverage move.",
+      prompt1: "Pick a system you manage or are close to — a team's workload, a sales pipeline, a cash position — and name its stock, its inflows/outflows, and at least one feedback loop (reinforcing or balancing) shaping it.",
+      prompt2: "Using the same system, identify which system trap from Tab 5 is operating, and name the specific evidence (a metric, a recurring complaint, a pattern in the data) that supports your read.",
+      prompt3: "Draft one <strong>low-leverage</strong> recommendation (a parameter or policy tweak) and one <strong>high-leverage</strong> recommendation (a goal, incentive, or information-flow change) for the same system, and state which you'd actually bring to a decision-maker and why.",
+      prompt4: "Identify a recurring problem in your organization currently being attributed to an individual's or team's performance. What structural cause (incentives, information flow, delay) might actually be producing it?"
+    }
+  };
+
+  var levelStorageKey = moduleSlug + "_readingLevel";
+  var levelBtns = Array.prototype.slice.call(document.querySelectorAll(".level-btn"));
+
+  function applyLevel(level){
+    var c = levelContent[level] || levelContent.undergrad;
+    var setHTML = function(id, html){ var el = document.getElementById(id); if(el){ el.innerHTML = html; } };
+
+    setHTML("audience-badge", c.audienceBadge);
+    setHTML("overview-p1", c.overviewP1);
+    setHTML("overview-p2", c.overviewP2);
+    setHTML("lo1-text", c.lo1);
+    setHTML("lo2-text", c.lo2);
+    setHTML("lo3-text", c.lo3);
+    setHTML("lo4-text", c.lo4);
+    setHTML("lo5-text", c.lo5);
+    setHTML("prompt1", c.prompt1);
+    setHTML("prompt2", c.prompt2);
+    setHTML("prompt3", c.prompt3);
+    setHTML("prompt4", c.prompt4);
+
+    levelBtns.forEach(function(btn){
+      btn.setAttribute("aria-pressed", btn.getAttribute("data-level") === level ? "true" : "false");
+    });
+  }
+
+  levelBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var level = btn.getAttribute("data-level");
+      applyLevel(level);
+      window.localStorage.setItem(levelStorageKey, level);
+    });
+  });
+
+  var savedLevel = window.localStorage.getItem(levelStorageKey) || "undergrad";
+  applyLevel(savedLevel);
+
+  /* ---------- Tabs ---------- */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  var panels = Array.prototype.slice.call(document.querySelectorAll('[role="tabpanel"]'));
+
+  function selectTab(tab){
+    tabs.forEach(function(t){
+      var selected = t === tab;
+      t.setAttribute("aria-selected", selected ? "true" : "false");
+      t.tabIndex = selected ? 0 : -1;
+    });
+    panels.forEach(function(p){
+      p.hidden = p.id !== tab.getAttribute("aria-controls");
+    });
+  }
+
+  tabs.forEach(function(tab, i){
+    tab.addEventListener("click", function(){ selectTab(tab); });
+    tab.addEventListener("keydown", function(e){
+      var idx = i;
+      if(e.key === "ArrowRight"){ idx = (i + 1) % tabs.length; }
+      else if(e.key === "ArrowLeft"){ idx = (i - 1 + tabs.length) % tabs.length; }
+      else if(e.key === "Home"){ idx = 0; }
+      else if(e.key === "End"){ idx = tabs.length - 1; }
+      else { return; }
+      e.preventDefault();
+      tabs[idx].focus();
+      selectTab(tabs[idx]);
+    });
+  });
+
+  /* ---------- localStorage autosave ---------- */
+  function storageKey(fieldKey){ return moduleSlug + "_" + fieldKey; }
+
+  var fields = Array.prototype.slice.call(document.querySelectorAll("[data-key]"));
+  fields.forEach(function(field){
+    var key = field.getAttribute("data-key");
+    var saved = window.localStorage.getItem(storageKey(key));
+    if(saved !== null){ field.value = saved; }
+
+    var statusEl = document.querySelector('[data-status-for="' + key + '"]');
+    var timer = null;
+
+    field.addEventListener("input", function(){
+      window.localStorage.setItem(storageKey(key), field.value);
+      if(statusEl){
+        statusEl.textContent = "Saved just now";
+        clearTimeout(timer);
+        timer = setTimeout(function(){ statusEl.textContent = ""; }, 1800);
+      }
+    });
+  });
+
+  /* ---------- Copy to clipboard ---------- */
+  var copyBtns = Array.prototype.slice.call(document.querySelectorAll(".btn-copy"));
+  copyBtns.forEach(function(btn){
+    var targetKey = btn.getAttribute("data-target");
+    var targetEl = document.querySelector('[data-key="' + targetKey + '"]');
+    var originalLabel = btn.textContent;
+
+    btn.addEventListener("click", function(){
+      var text = targetEl ? targetEl.value : "";
+      var done = function(){
+        btn.textContent = "Copied!";
+        btn.setAttribute("data-copied", "true");
+        setTimeout(function(){
+          btn.textContent = originalLabel;
+          btn.removeAttribute("data-copied");
+        }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, done);
+      } else {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } catch(e){}
+        document.body.removeChild(ta);
+        done();
+      }
+    });
+  });
+
+  /* ---------- Leverage points (Tab 2) ---------- */
+  var leveragePoints = [
+    {rank:12, tier:"low", title:"Constants, Parameters, Numbers", sub:"subsidies, taxes, standards",
+      analysis:"The numbers within a fixed structure — tax rates, minimum wage, speed limits, quotas — are what most policy debates fight over, yet Meadows ranks them as the weakest lever because they don't change the structure that produces the system's behavior.",
+      apply:"Adjust a parameter only as a stopgap while you look for leverage further up the list; don't mistake “we changed the number” for “we fixed the system.”"},
+    {rank:11, tier:"low", title:"Sizes of Buffers and Stabilizing Stocks", sub:"relative to their flows",
+      analysis:"A buffer (a warehouse, a savings account, a reservoir) absorbs shocks; bigger buffers make a system more stable but also less responsive and often more expensive to build or maintain.",
+      apply:"Look for undersized buffers causing brittle systems (e.g., just-in-time inventory with no slack) or oversized buffers wasting resources, and resize deliberately."},
+    {rank:10, tier:"low", title:"Structure of Material Stocks and Flows", sub:"e.g., transport networks, factories, age structures",
+      analysis:"The physical architecture — pipes, roads, plants — sets hard constraints on what the system can do; once built, this structure is expensive and slow to change.",
+      apply:"Redesign physical infrastructure only after parameter and buffer tweaks are exhausted — this lever is costly to pull but durable once pulled."},
+    {rank:9, tier:"mid", title:"Length of Delays", sub:"relative to the rate of system change",
+      analysis:"Long delays between an action and its feedback are a primary cause of overshoot and oscillation, because decision-makers keep pushing after the system has already begun to respond.",
+      apply:"Shorten feedback delays where possible (faster reporting, real-time data); where delays are fixed, slow the pace of action to match them instead of reacting harder."},
+    {rank:8, tier:"mid", title:"Strength of Balancing Feedback Loops", sub:"relative to the impacts they must correct",
+      analysis:"Balancing loops keep a system near a goal (a thermostat, a regulatory agency); if the loop is too weak relative to a growing disturbance, the system drifts off target.",
+      apply:"Strengthen monitoring, enforcement, or corrective capacity so the balancing loop can keep pace with the disturbance it's meant to counter."},
+    {rank:7, tier:"mid", title:"Gain Around Reinforcing Feedback Loops", sub:"driving loops that amplify change",
+      analysis:"Reinforcing loops amplify change — compounding interest, population growth, viral spread — and left unchecked they drive runaway growth or collapse.",
+      apply:"Slowing the gain on a harmful reinforcing loop (e.g., capping a compounding effect) is more powerful than any downstream parameter change."},
+    {rank:6, tier:"mid", title:"Structure of Information Flows", sub:"who does and doesn't have access to information",
+      analysis:"Missing feedback is a common cause of system malfunction — actors who don't see the consequences of their choices can't correct course.",
+      apply:"Route information directly to the point of decision (real-time utility meters, public disclosure of pollution data) to activate self-correction."},
+    {rank:5, tier:"high", title:"Rules of the System", sub:"incentives, punishments, constraints",
+      analysis:"Rules define the scope of a system's behavior more powerfully than any parameter set within them; changing who owns what or what's rewarded reshapes outcomes.",
+      apply:"Rewrite the rule itself, not just its setting — e.g., shift an incentive structure from output-based to outcome-based."},
+    {rank:4, tier:"high", title:"Power to Self-Organize", sub:"add, change, or evolve system structure",
+      analysis:"Systems that can rewrite their own rules and structures (evolution, R&D, constitutional amendment) are more powerful and resilient than any single fixed configuration.",
+      apply:"Protect and invest in a system's capacity for self-organization — diversity, experimentation, learning — rather than only optimizing its current form."},
+    {rank:3, tier:"high", title:"Goals of the System", sub:"stated vs. revealed",
+      analysis:"Every rule and structure serves some goal, stated or not; a system optimized for the wrong goal (e.g., GDP growth over well-being) will faithfully produce the wrong outcome.",
+      apply:"Interrogate revealed goals, not stated ones — ask what the system's actual behavior optimizes for — and change the goal itself."},
+    {rank:2, tier:"high", title:"Mindset or Paradigm", sub:"the shared assumption the system arises from",
+      analysis:"Goals, rules, and structures all flow from a shared, often unstated paradigm (e.g., “nature is a resource for human use”); shift the paradigm and everything downstream can shift with it.",
+      apply:"Surface the paradigm explicitly, and create persistent, visible counter-examples until the old paradigm loses its grip."},
+    {rank:1, tier:"high", title:"Power to Transcend Paradigms", sub:"the deepest and rarest lever",
+      analysis:"The deepest leverage point is holding no paradigm as ultimate truth — staying flexible enough to choose whichever paradigm fits the situation, and seeing that all models, including this one, are simplifications.",
+      apply:"Cultivate intellectual humility and a willingness to “dance with the system” rather than defending a single fixed worldview."}
+  ];
+
+  var effLabel = {low:"Lower Leverage", mid:"Moderate Leverage", high:"Higher Leverage"};
+  var listEl = document.getElementById("leverage-list");
+  var frag = document.createDocumentFragment();
+
+  leveragePoints.forEach(function(lp){
+    var item = document.createElement("div");
+    item.className = "leverage-item";
+    item.setAttribute("data-open", "false");
+
+    var bodyId = "lp-body-" + lp.rank;
+
+    var toggle = document.createElement("button");
+    toggle.className = "leverage-toggle";
+    toggle.type = "button";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-controls", bodyId);
+    toggle.innerHTML =
+      '<span class="leverage-rank">#' + lp.rank + '</span>' +
+      '<span class="lt-title">' + lp.title + ' <span style="font-weight:400;color:var(--muted);">— ' + lp.sub + '</span>' +
+      '<span class="leverage-effectiveness eff-' + lp.tier + '">' + effLabel[lp.tier] + '</span></span>' +
+      '<span class="lt-icon">▼</span>';
+
+    var body = document.createElement("div");
+    body.className = "leverage-body";
+    body.id = bodyId;
+    body.hidden = true;
+    body.innerHTML =
+      '<p><span class="lb-label">Analysis</span>' + lp.analysis + '</p>' +
+      '<p><span class="lb-label">How to Apply It</span>' + lp.apply + '</p>';
+
+    toggle.addEventListener("click", function(){
+      var isOpen = item.getAttribute("data-open") === "true";
+      item.setAttribute("data-open", isOpen ? "false" : "true");
+      toggle.setAttribute("aria-expanded", isOpen ? "false" : "true");
+      body.hidden = isOpen;
+    });
+
+    item.appendChild(toggle);
+    item.appendChild(body);
+    frag.appendChild(item);
+  });
+
+  listEl.appendChild(frag);
+})();
+</script>
+</body>
+</html>

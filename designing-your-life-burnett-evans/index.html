@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Designing Your Life — Guided Reading Companion</title>
+<style>
+  :root{
+    --text:#2c2013;
+    --bg:#faf5ea;
+    --accent:#a8461f;
+    --accent-dark:#832f11;
+    --accent-soft:#f3e0cf;
+    --border:#e6dbc4;
+    --card-bg:#fffcf5;
+    --muted:#7a6a54;
+    --success:#4d6b3f;
+    --success-soft:#e6ecdc;
+    --warn:#95591c;
+    --warn-soft:#f3e6c9;
+    --serif: Palatino, "Palatino Linotype", "Iowan Old Style", "Book Antiqua", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--serif);
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 80px;}
+  a{color:var(--accent);}
+
+  /* Header */
+  header.page-header{margin-bottom:36px;}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);
+    font-size:12.5px;font-weight:600;letter-spacing:.02em;
+    padding:5px 12px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent-dark);
+    border:1px solid #e3c8a8;
+  }
+  .badge.muted{background:#f2ede0;color:var(--muted);border-color:var(--border);}
+  .badge.success{background:var(--success-soft);color:#3d5732;border-color:#cfdcc0;}
+
+  h1{font-size:clamp(1.9rem,3.4vw,2.5rem);margin:0 0 4px;letter-spacing:-.01em;font-weight:600;font-style:italic;}
+  .subtitle{color:var(--muted);font-size:1.05rem;margin:0 0 14px;font-style:italic;}
+  .citation{
+    font-size:.88rem;color:var(--muted);font-family:var(--sans);
+    border-left:3px solid var(--accent-soft);padding-left:12px;margin-bottom:22px;
+  }
+  .overview p{margin:0 0 12px;font-size:.98rem;}
+  .overview{margin-bottom:18px;}
+
+  .privacy-note{
+    display:flex;gap:10px;align-items:flex-start;
+    background:var(--card-bg);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:8px;padding:12px 14px;font-size:.87rem;color:var(--muted);margin-bottom:8px;
+  }
+  .privacy-note strong{color:var(--text);}
+
+  /* Reading level toggle */
+  .level-picker{
+    display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:18px 0 22px;
+    font-family:var(--sans);
+  }
+  .level-picker .lp-label{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+  .level-group{display:inline-flex;background:var(--accent-soft);border:1px solid #e3c8a8;border-radius:999px;padding:3px;gap:2px;}
+  .level-btn{
+    appearance:none;border:none;background:transparent;cursor:pointer;
+    font-family:var(--sans);font-size:.82rem;font-weight:600;color:var(--accent-dark);
+    padding:6px 14px;border-radius:999px;transition:background .15s,color .15s;
+  }
+  .level-btn:hover{background:#eccbaa;}
+  .level-btn[aria-pressed="true"]{background:var(--accent);color:#fffaf0;}
+  .level-btn:focus-visible{outline:2px solid var(--accent-dark);outline-offset:2px;}
+
+  /* Learning outcomes */
+  .lo-section{margin:30px 0 38px;}
+  .lo-section h2{font-size:1.15rem;margin:0 0 4px;}
+  .lo-section .lo-sub{color:var(--muted);font-size:.88rem;margin:0 0 16px;}
+  .lo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;}
+  .lo-card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:10px;
+    padding:14px 16px;font-size:.88rem;
+  }
+  .lo-card .lo-tag{
+    display:inline-block;font-family:var(--sans);font-size:11px;font-weight:700;color:var(--accent-dark);
+    background:var(--accent-soft);border-radius:5px;padding:2px 7px;margin-bottom:8px;
+    letter-spacing:.04em;
+  }
+  .lo-card .lo-verb{font-weight:700;color:var(--text);}
+
+  /* Tabs */
+  .tabs{
+    display:flex;gap:4px;border-bottom:2px solid var(--border);
+    overflow-x:auto;margin-bottom:24px;-ms-overflow-style:none;scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab-btn{
+    appearance:none;border:none;background:transparent;cursor:pointer;
+    font-family:var(--sans);font-size:.88rem;font-weight:600;color:var(--muted);
+    padding:11px 16px;white-space:nowrap;border-bottom:2px solid transparent;
+    margin-bottom:-2px;transition:color .15s, border-color .15s;
+  }
+  .tab-btn:hover{color:var(--accent-dark);}
+  .tab-btn[aria-selected="true"]{color:var(--accent-dark);border-bottom-color:var(--accent);}
+  .tab-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;}
+  .tab-meta{display:block;font-weight:400;font-size:10.5px;color:var(--muted);margin-top:2px;letter-spacing:.02em;}
+
+  .panel{animation:fade .15s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
+  .panel h2{font-size:1.3rem;margin:0 0 6px;}
+  .panel .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 22px;}
+
+  /* Generic cards */
+  .card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:10px;
+    padding:18px 20px;margin-bottom:14px;
+  }
+  .card h3{margin:0 0 8px;font-size:1.02rem;}
+  .card p{margin:0 0 8px;font-size:.92rem;}
+  .card p:last-child{margin-bottom:0;}
+
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:24px;}
+
+  .theme-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .theme-list li{
+    display:flex;gap:12px;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;
+    padding:12px 14px;font-size:.9rem;
+  }
+  .theme-num{
+    flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;
+  }
+
+  .tension-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin-bottom:24px;}
+  .tension-col{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+  .tension-col h4{margin:0 0 8px;font-size:.95rem;}
+  .tension-col ul{margin:0;padding-left:18px;font-size:.87rem;}
+  .tension-col li{margin-bottom:5px;}
+  .tension-vs{
+    display:flex;align-items:center;justify-content:center;padding:0 14px;
+    font-weight:700;color:var(--muted);font-size:.8rem;
+  }
+  @media(max-width:680px){
+    .tension-grid{grid-template-columns:1fr;}
+    .tension-vs{padding:8px 0;}
+  }
+
+  /* Toolkit (process) list */
+  .toolkit-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px;}
+  .toolkit-item{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .toolkit-toggle{
+    width:100%;display:flex;align-items:center;gap:14px;text-align:left;
+    background:transparent;border:none;cursor:pointer;padding:14px 16px;font-family:var(--sans);
+  }
+  .toolkit-rank{
+    flex:0 0 auto;width:34px;height:34px;border-radius:8px;background:var(--accent-soft);color:var(--accent-dark);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;
+  }
+  .toolkit-toggle .lt-title{flex:1;font-weight:600;font-size:.94rem;color:var(--text);}
+  .toolkit-toggle .lt-icon{color:var(--muted);transition:transform .15s;font-size:.8rem;}
+  .toolkit-item[data-open="true"] .lt-icon{transform:rotate(180deg);}
+  .toolkit-body{padding:0 16px 16px 64px;font-size:.88rem;}
+  .toolkit-body p{margin:0 0 8px;}
+  .toolkit-body .lb-label{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-dark);display:block;margin-bottom:3px;}
+  .toolkit-stage{
+    font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:8px;white-space:nowrap;
+  }
+  .stage-foundation{background:#f2ede0;color:var(--muted);}
+  .stage-diagnosis{background:var(--warn-soft);color:var(--warn);}
+  .stage-testing{background:var(--success-soft);color:#3d5732;}
+
+  /* Close reading concept cards */
+  .concept-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;}
+  .concept-head{padding:14px 18px;border-bottom:1px solid var(--border);background:#f5efe1;}
+  .concept-head h3{margin:0;font-size:1rem;}
+  .concept-cols{display:grid;grid-template-columns:1fr 1fr;}
+  .concept-col{padding:16px 18px;font-size:.88rem;}
+  .concept-col:first-child{border-right:1px solid var(--border);}
+  .concept-col .col-label{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);display:block;margin-bottom:8px;}
+  @media(max-width:680px){
+    .concept-cols{grid-template-columns:1fr;}
+    .concept-col:first-child{border-right:none;border-bottom:1px solid var(--border);}
+  }
+  .belief-pair{background:#f5efe1;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:.86rem;}
+  .belief-pair:last-child{margin-bottom:0;}
+  .belief-pair .bad{color:var(--warn);font-weight:700;}
+  .belief-pair .good{color:#3d5732;font-weight:700;}
+
+  /* Reflection */
+  .reflection-item{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:16px;}
+  .reflection-item .rq-tag{font-family:var(--sans);font-size:11px;font-weight:700;color:var(--accent-dark);background:var(--accent-soft);padding:2px 8px;border-radius:5px;letter-spacing:.03em;}
+  .reflection-item p.prompt{margin:8px 0 12px;font-size:.94rem;font-weight:600;}
+  textarea{
+    width:100%;min-height:110px;resize:vertical;font-family:var(--sans);font-size:.9rem;
+    border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);
+    background:#f5efe1;
+  }
+  textarea:focus{outline:2px solid var(--accent);outline-offset:1px;background:var(--card-bg);}
+  .reflection-actions{display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px;}
+  .save-status{font-family:var(--sans);font-size:.76rem;color:var(--muted);}
+  .btn{
+    appearance:none;border:1px solid var(--border);background:var(--card-bg);color:var(--text);
+    font-family:var(--sans);font-size:.82rem;font-weight:600;padding:7px 13px;border-radius:7px;cursor:pointer;
+    transition:background .15s, border-color .15s;
+  }
+  .btn:hover{border-color:var(--accent);color:var(--accent-dark);}
+  .btn.btn-copy[data-copied="true"]{background:var(--success-soft);border-color:#cfdcc0;color:#3d5732;}
+
+  /* Glossary */
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;}
+  .term-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:13px 15px;}
+  .term-card dt{font-weight:700;font-size:.88rem;margin-bottom:4px;color:var(--text);}
+  .term-card dd{margin:0;font-size:.83rem;color:var(--muted);}
+  .glossary-group-title{font-family:var(--sans);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:26px 0 10px;}
+  .glossary-group-title:first-child{margin-top:0;}
+
+  footer.page-footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--border);font-size:.78rem;color:var(--muted);text-align:center;}
+</style>
+</head>
+<body data-module="designing-your-life-burnett-evans">
+<div class="wrap">
+
+  <header class="page-header">
+    <div class="badges">
+      <span class="badge">Design Thinking · Career &amp; Life Planning</span>
+      <span class="badge muted" id="audience-badge">Undergraduate &amp; Graduate · Career Development, Design, Psychology</span>
+      <span class="badge success">5 Learning Outcomes</span>
+    </div>
+    <h1>Designing Your Life: How to Build a Well-Lived, Joyful Life</h1>
+    <p class="subtitle">A Guided Reading Companion</p>
+    <p class="citation">
+      Bill Burnett &amp; Dave Evans · Alfred A. Knopf, 2016
+      (developed from their Stanford d.school course, "Designing Your Life")
+    </p>
+
+    <div class="level-picker">
+      <span class="lp-label">Reading Level</span>
+      <div class="level-group" role="group" aria-label="Reading level">
+        <button type="button" class="level-btn" data-level="intro" aria-pressed="false">Intro / High School</button>
+        <button type="button" class="level-btn" data-level="undergrad" aria-pressed="true">Undergrad / Grad</button>
+        <button type="button" class="level-btn" data-level="exec" aria-pressed="false">Executive / Professional</button>
+      </div>
+    </div>
+
+    <div class="overview">
+      <p id="overview-p1"></p>
+      <p id="overview-p2"></p>
+    </div>
+
+    <div class="privacy-note">
+      <span>🔒</span>
+      <span><strong>Your answers stay on this device.</strong> Everything you type in Tab 4 is saved only
+      to your browser's local storage on this page — nothing is sent to a server, an instructor, or any
+      third party unless you explicitly copy and submit it yourself.</span>
+    </div>
+  </header>
+
+  <section class="lo-section">
+    <h2>Learning Outcomes</h2>
+    <p class="lo-sub">By the end of this module, you should be able to:</p>
+    <div class="lo-grid">
+      <div class="lo-card">
+        <span class="lo-tag">LO1</span>
+        <p id="lo1-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO2</span>
+        <p id="lo2-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO3</span>
+        <p id="lo3-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO4</span>
+        <p id="lo4-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO5</span>
+        <p id="lo5-text"></p>
+      </div>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="Module sections">
+    <button class="tab-btn" role="tab" id="tab-btn-1" aria-controls="tab-1" aria-selected="true" tabindex="0">
+      Core Framework<span class="tab-meta">Supports LO1 · LO2</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-2" aria-controls="tab-2" aria-selected="false" tabindex="-1">
+      Design Toolkit<span class="tab-meta">Supports LO3 · LO5</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-3" aria-controls="tab-3" aria-selected="false" tabindex="-1">
+      Close Reading<span class="tab-meta">Supports LO2 · LO4</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-4" aria-controls="tab-4" aria-selected="false" tabindex="-1">
+      Reflection<span class="tab-meta">Supports LO3 · LO5</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-5" aria-controls="tab-5" aria-selected="false" tabindex="-1">
+      Glossary<span class="tab-meta">Supports all LOs</span>
+    </button>
+  </nav>
+
+  <!-- TAB 1 : CORE FRAMEWORK -->
+  <section class="panel" id="tab-1" role="tabpanel" aria-labelledby="tab-btn-1" tabindex="0">
+    <h2>Core Framework &amp; Mental Models</h2>
+    <p class="panel-sub">The vocabulary Burnett and Evans build early in the book, and the central tension the whole approach argues from.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>Design Thinking</h3>
+        <p>A problem-solving approach borrowed from product design: get curious about the problem, generate
+        many possible solutions before judging any of them, and build something cheap and testable rather
+        than reasoning your way to a conclusion in your head.</p>
+      </div>
+      <div class="card">
+        <h3>Wayfinding</h3>
+        <p>Navigating toward a life without a fixed destination, using markers of
+        <strong>engagement</strong> and <strong>energy</strong> — not a rigid five-year plan — to tell you
+        whether you're headed somewhere good.</p>
+      </div>
+      <div class="card">
+        <h3>Dysfunctional Belief</h3>
+        <p>A widely held idea about work or life that sounds true but actually blocks you from moving
+        forward — e.g., "I should already know what I want to do." Named so it can be replaced with a
+        <strong>reframe</strong>.</p>
+      </div>
+      <div class="card">
+        <h3>Gravity Problem</h3>
+        <p>A circumstance you can't change no matter how hard you work at it (your age, the economy, a
+        past decision). Gravity problems aren't solved — they're accepted and designed around.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">The Central Tension: Life Planning vs. Life Design</h3>
+    <div class="tension-grid">
+      <div class="tension-col">
+        <h4>The Life-Planning View</h4>
+        <ul>
+          <li>Set a specific long-term goal and work backward from it.</li>
+          <li>Success means hitting the goal you set years ago.</li>
+          <li>One "right" career or path exists — your job is to find it.</li>
+          <li>Changing direction late means you failed to plan well.</li>
+        </ul>
+      </div>
+      <div class="tension-vs">VS</div>
+      <div class="tension-col">
+        <h4>Burnett &amp; Evans's Life-Design View</h4>
+        <ul>
+          <li>Follow markers of engagement and energy — wayfinding, not a fixed goal.</li>
+          <li>Success means staying engaged and coherent, even as the path changes.</li>
+          <li>Many workable lives exist for you — design and test a few of them.</li>
+          <li>Changing direction is data, not failure — it's how the process works.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">Five Guiding Themes to Track While You Read</h3>
+    <ul class="theme-list">
+      <li><span class="theme-num">1</span><span><strong>Engagement is the compass.</strong> Notice what absorbs you and what drains you — that data (the Good Time Journal) is more reliable than abstract goal-setting.</span></li>
+      <li><span class="theme-num">2</span><span><strong>Problems must be reframed before they can be solved.</strong> A dysfunctional belief disguised as a problem statement will never yield a good answer.</span></li>
+      <li><span class="theme-num">3</span><span><strong>Generate before you evaluate.</strong> Design thinking insists on multiple options (the Odyssey Plans) before choosing — judging too early kills good ideas.</span></li>
+      <li><span class="theme-num">4</span><span><strong>Prototype cheaply before committing.</strong> A short conversation or small experience tells you more than months of deliberation.</span></li>
+      <li><span class="theme-num">5</span><span><strong>Coherence beats "the best choice."</strong> A workable life is one where your Workview, Lifeview, and daily actions align — not the theoretically optimal path.</span></li>
+    </ul>
+  </section>
+
+  <!-- TAB 2 : DESIGN TOOLKIT -->
+  <section class="panel" id="tab-2" role="tabpanel" aria-labelledby="tab-btn-2" tabindex="0" hidden>
+    <h2>The Life Design Toolkit</h2>
+    <p class="panel-sub">The book's six-stage process, in sequence — click each to expand the analysis and how to apply it. Ordered as Burnett and Evans build it, from mindset to decision.</p>
+
+    <div class="toolkit-list" id="toolkit-list"></div>
+  </section>
+
+  <!-- TAB 3 : CLOSE READING -->
+  <section class="panel" id="tab-3" role="tabpanel" aria-labelledby="tab-btn-3" tabindex="0" hidden>
+    <h2>Close Reading &amp; Technical Deep Dive</h2>
+    <p class="panel-sub">A slower, side-by-side pass on the mechanics that make the rest of the book work.</p>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>1. Dysfunctional Beliefs vs. Reframes</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <div class="belief-pair"><span class="bad">Belief:</span> "I need to figure out my one true passion." <br><span class="good">Reframe:</span> Most people don't have a single pre-existing passion; engagement is built through trying things, not discovered by introspection.</div>
+          <div class="belief-pair"><span class="bad">Belief:</span> "It's too late to change direction." <br><span class="good">Reframe:</span> There's always a version of a good life still available from here; the question is which one, not whether one exists.</div>
+          <div class="belief-pair"><span class="bad">Belief:</span> "A career should be a straight line up." <br><span class="good">Reframe:</span> Most well-lived careers zigzag; coherence, not linearity, is what makes a path feel right.</div>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>A belief functions as <em>dysfunctional</em> when it (a) forecloses exploration before any data
+          is gathered, and (b) can't actually be tested or falsified — it's accepted as background truth.
+          The reframe technique doesn't argue the belief is false outright; it substitutes a more workable
+          belief that reopens the option space, then lets prototyping supply the evidence.</p>
+          <p>This mirrors a designer's move: don't argue with a client's stated problem — reframe the design
+          brief until it's solvable, then test the reframed version against reality.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>2. Gravity Problems vs. Actionable Problems</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <p>A <strong>gravity problem</strong> is a circumstance no amount of effort will change — you
+          can't out-work gravity. Examples: you can't be 20 years old again, you can't force a specific
+          person to hire you, you can't undo a market downturn.</p>
+          <p>An <strong>actionable problem</strong>, by contrast, responds to effort and iteration: how you
+          present your experience, which industries you target, what skills you build next.</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>Misclassifying a gravity problem as actionable produces a specific failure mode — repeated
+          effort with no traction, because the problem was never solvable, only acceptable. Misclassifying
+          an actionable problem as gravity produces premature resignation.</p>
+          <p>The diagnostic test Burnett and Evans propose: ask whether the problem responds at all to a
+          <em>change in approach</em>, not just a change in effort. If varying the approach changes nothing,
+          it's likely gravity — accept it and design around it instead.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>3. Scoring the Odyssey Plan — Resonance, Confidence, Resources, Coherence</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <p>Each of the three Odyssey Plans gets rated on four dimensions: <strong>Resonance</strong> (does
+          this plan feel like "you" when you imagine living it?), <strong>Confidence</strong> (how sure are
+          you this is achievable?), <strong>Resources</strong> (do you have, or can you get, what this
+          requires — money, time, skills, relationships?), and <strong>Coherence</strong> (does this plan
+          match your Workview and Lifeview?).</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>The scoring isn't meant to produce a single winning number — a plan can score low on Confidence
+          and still be worth pursuing, since confidence typically rises <em>after</em> prototyping, not
+          before it. The real value of the exercise is comparative: it surfaces which trade-offs you're
+          actually making between plans, rather than letting one plan win by being the only one you
+          considered.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4 : REFLECTION -->
+  <section class="panel" id="tab-4" role="tabpanel" aria-labelledby="tab-btn-4" tabindex="0" hidden>
+    <h2>Reflection &amp; Synthesis Exercises</h2>
+    <p class="panel-sub">Run several of the book's actual exercises. Your answers autosave to this browser as you type.</p>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 1 · Supports LO1</span>
+      <p class="prompt" id="prompt1"></p>
+      <textarea data-key="reflect1" aria-label="Reflection 1 response" placeholder="e.g., Engaging: prepping for a debate — lost track of time. Draining: reformatting a spreadsheet for a professor, even though it was easy..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect1">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect1"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 2 · Supports LO2 · LO3</span>
+      <p class="prompt" id="prompt2"></p>
+      <textarea data-key="reflect2" aria-label="Reflection 2 response" placeholder="e.g., Belief: 'I should already know what industry I want.' This is dysfunctional, not gravity — reframe: engagement gets built by trying roles, not by pre-deciding..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect2">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect2"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 3 · Supports LO4</span>
+      <p class="prompt" id="prompt3"></p>
+      <textarea data-key="reflect3" aria-label="Reflection 3 response" placeholder="Plan A: continue current major/track toward... Plan B: if that vanished, I'd... Plan C (wildcard): if money/image didn't matter, I'd..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect3">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect3"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 4 · Supports LO5</span>
+      <p class="prompt" id="prompt4"></p>
+      <textarea data-key="reflect4" aria-label="Reflection 4 response" placeholder="e.g., I'll ask my advisor to connect me with someone one year into that field for a 20-minute Life Design Interview..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect4">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect4"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 5 : GLOSSARY -->
+  <section class="panel" id="tab-5" role="tabpanel" aria-labelledby="tab-btn-5" tabindex="0" hidden>
+    <h2>Reference &amp; Glossary</h2>
+    <p class="panel-sub">Core terms and the book's named tools and exercises.</p>
+
+    <div class="glossary-group-title">Core Vocabulary</div>
+    <div class="glossary-grid">
+      <div class="term-card"><dt>Design Thinking</dt><dd>A method favoring curiosity, generating many options, and testable prototypes over pure analysis — borrowed from product design and applied to life decisions.</dd></div>
+      <div class="term-card"><dt>Wayfinding</dt><dd>Navigating toward a good life using markers of engagement and energy rather than a fixed long-term goal.</dd></div>
+      <div class="term-card"><dt>Engagement</dt><dd>The degree to which an activity absorbs your attention — a primary signal for what to do more of.</dd></div>
+      <div class="term-card"><dt>Energy</dt><dd>Whether an activity leaves you fueled or drained, independent of how enjoyable it seemed in the moment.</dd></div>
+      <div class="term-card"><dt>Dysfunctional Belief</dt><dd>A widely held idea about work or life that sounds true but blocks exploration before any evidence is gathered.</dd></div>
+      <div class="term-card"><dt>Reframe</dt><dd>A substitute belief that reopens the option space a dysfunctional belief had closed off.</dd></div>
+      <div class="term-card"><dt>Gravity Problem</dt><dd>A circumstance that doesn't respond to effort or a change in approach — accepted and designed around, not solved.</dd></div>
+      <div class="term-card"><dt>Actionable Problem</dt><dd>A problem that does respond to effort, a change in approach, or iteration — a legitimate target for design.</dd></div>
+      <div class="term-card"><dt>Coherence</dt><dd>The degree to which your Workview, Lifeview, and daily choices actually align with each other.</dd></div>
+      <div class="term-card"><dt>Radical Collaboration</dt><dd>Treating life design as a team sport — actively seeking other people's perspectives and experience rather than deciding in isolation.</dd></div>
+      <div class="term-card"><dt>Bias to Action</dt><dd>Preferring a small real-world test over further deliberation whenever a decision is stuck in analysis.</dd></div>
+      <div class="term-card"><dt>Failure Immunity</dt><dd>Distinguishing types of "failure" (a screwup, a weakness, or ordinary growth) so setbacks inform the next iteration instead of stopping it.</dd></div>
+    </div>
+
+    <div class="glossary-group-title">Tools From the Book</div>
+    <div class="glossary-grid">
+      <div class="term-card"><dt>Good Time Journal</dt><dd>A daily log rating activities on engagement and energy, kept for several weeks to surface real patterns instead of guesses.</dd></div>
+      <div class="term-card"><dt>Workview</dt><dd>A short written statement of what work is for — money, growth, contribution, status — checked against your Lifeview.</dd></div>
+      <div class="term-card"><dt>Lifeview</dt><dd>A short written statement of what life is for — meaning, relationships, purpose — checked against your Workview.</dd></div>
+      <div class="term-card"><dt>Odyssey Plan</dt><dd>Three distinct five-year plans (current path, alternate path, wildcard path) sketched side-by-side before choosing among or combining them.</dd></div>
+      <div class="term-card"><dt>Resonance</dt><dd>An Odyssey Plan rating for how much a plan feels like an authentic "you" when you imagine living it.</dd></div>
+      <div class="term-card"><dt>Confidence (rating)</dt><dd>An Odyssey Plan rating for how achievable a plan currently seems — expected to rise after prototyping, not before.</dd></div>
+      <div class="term-card"><dt>Resources (rating)</dt><dd>An Odyssey Plan rating for whether you have, or can realistically get, what the plan requires.</dd></div>
+      <div class="term-card"><dt>Prototype Conversation</dt><dd>A structured conversation (a "Life Design Interview") with someone already living a version of a path you're considering.</dd></div>
+      <div class="term-card"><dt>Prototype Experience</dt><dd>A short, low-stakes trial of a path — a weekend, a volunteer stint, a side project — run before committing years to it.</dd></div>
+      <div class="term-card"><dt>Anchor Problem</dt><dd>The real underlying problem once a dysfunctional belief has been reframed — the thing actually worth designing a solution for.</dd></div>
+      <div class="term-card"><dt>"Good Enough" Decision-Making</dt><dd>Choosing among well-prototyped options once you have sufficient information, rather than searching indefinitely for a provably optimal choice.</dd></div>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    Guided Reading Companion · <em>Designing Your Life</em>, Bill Burnett &amp; Dave Evans (Knopf, 2016) · Answers stored locally in your browser only.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var moduleSlug = document.body.getAttribute("data-module");
+
+  /* ---------- Reading level content ---------- */
+  var levelContent = {
+    intro: {
+      audienceBadge: "Intro / High School · Career &amp; Life Planning Basics",
+      overviewP1: "<em>Designing Your Life</em> teaches you to treat your future — your career, your college major, your next few years — like a project you can experiment with, the way designers build and test products, instead of something you have to figure out perfectly in your head before you start. Bill Burnett and Dave Evans, who teach this at Stanford, argue you don't need one single \"true calling\" — you can build a good life by noticing what actually engages you and trying small versions of different paths.",
+      overviewP2: "This page is a study guide to use next to the book, not a replacement for it. Tab 1 gives you the key ideas and the big shift in thinking the book asks for. Tab 2 walks through six tools from the book, in order, that you can click through. Tab 3 looks closer at two of the trickiest ideas. Tab 4 has you actually try some of the exercises, and Tab 5 is a glossary you can check any time.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the ideas of \"engagement,\" \"energy,\" and \"dysfunctional belief\" using examples from your own daily life.",
+      lo2: "<span class=\"lo-verb\">Trace</span> how a belief about your future (like \"I should already know what I want to do\") can make you feel stuck, and how reframing it opens up options.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> between something you truly can't change (a gravity problem) and something you just believe you can't change (a dysfunctional belief).",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> a choice about your future by imagining three different paths, not just the one you already assumed.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> one small, low-risk way to test out an idea about your future before committing to it.",
+      prompt1: "Think about your last few days at school or home. What's one thing you did where time seemed to fly by, and one thing that felt like a slog even though it wasn't that hard? What's different about them?",
+      prompt2: "What's something people often say about growing up or choosing a career that makes you feel stuck or worried? Is it actually true for everyone, or could you reframe it?",
+      prompt3: "Imagine three different versions of your life 5 years from now: one where you keep doing what you're already planning, one where that plan falls through, and one totally different \"dream\" version. Describe each in a sentence or two.",
+      prompt4: "Pick one of your three future versions. What's one small, low-risk thing you could actually try, or someone you could talk to, to learn more about what that life is really like?"
+    },
+    undergrad: {
+      audienceBadge: "Undergraduate &amp; Graduate · Career Development, Design, Psychology",
+      overviewP1: "<em>Designing Your Life</em> applies design thinking — the same iterative, prototype-driven process Bill Burnett and Dave Evans teach engineers and product designers at Stanford's d.school — to the problem of building a life you actually want to live. Their central claim is that most of us approach big life decisions (career, relationships, purpose) like problem-solvers looking for the one correct answer, when we should instead treat them like designers: generate many possible lives, test small versions of them cheaply, and let engagement and energy — not a five-year plan — guide the way.",
+      overviewP2: "This module works alongside the book, not in place of it. Tab 1 introduces the vocabulary and the central tension between goal-setting and wayfinding. Tab 2 walks the book's toolkit as a six-stage process you can click through. Tab 3 does a closer read of dysfunctional beliefs, gravity problems, and the Odyssey Plan's scoring system. Tab 4 asks you to actually run several of the book's exercises, and Tab 5 is a standing glossary. Work through the tabs in order the first time; after that, jump to whichever one you need.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the core design-thinking vocabulary — wayfinding, engagement/energy, dysfunctional belief and reframe — from a plain-language description of your own life.",
+      lo2: "<span class=\"lo-verb\">Trace</span> how a specific dysfunctional belief produces a stuck pattern in a real decision, and how reframing it opens up new options.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> between a gravity problem (unchangeable, requires acceptance) and an actionable problem (solvable through design) in a situation you're facing.",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> a life or career option using the Odyssey Plan's resonance, confidence, resources, and coherence criteria rather than searching for a single \"right answer.\"",
+      lo5: "<span class=\"lo-verb\">Formulate</span> a low-risk prototype — a conversation or short experience — that would test one of your ideas before you commit to it.",
+      prompt1: "Think back over the last two weeks. Name three activities where you lost track of time (high engagement) and three that drained you even though they weren't hard (low energy). What pattern do you notice?",
+      prompt2: "Name one belief that's currently making you feel stuck about your future. Is it a dysfunctional belief (widely held but not actually true) or a gravity problem (genuinely unchangeable)? Write a reframe if it's dysfunctional.",
+      prompt3: "Sketch three brief 5-year plans for yourself: (A) your current likely path continued, (B) what you'd do if Plan A stopped being available, (C) a wildcard plan assuming money and image didn't matter. Give each a one-line resonance rating.",
+      prompt4: "Pick one of your Odyssey Plans. Design one low-risk prototype — a conversation with someone living that path, or a short experience you could try in the next month — that would give you real data about it."
+    },
+    exec: {
+      audienceBadge: "Executive / Professional · Career Strategy &amp; Organizational Design",
+      overviewP1: "<em>Designing Your Life</em> is Bill Burnett and Dave Evans's application of Stanford d.school design thinking to career and life strategy — a discipline for professionals who are optimizing hard against a plan that no longer fits, or who are choosing between competing paths without a reliable way to compare them. Their core argument: career decisions treated as a single optimization problem (find the \"best\" next role) consistently underperform decisions treated as a design problem — generate several viable paths, prototype cheaply, and choose on coherence and engagement rather than prestige or a resume narrative.",
+      overviewP2: "Use this page as a working reference alongside the book, not a substitute for it. Tab 1 gives you the vocabulary to name what's driving a stuck career decision. Tab 2 is the highest-value tab for practitioners: a six-stage toolkit from self-awareness through prototyping to a decision. Tab 3 backs that up with the mechanics of reframing and the Odyssey Plan's scoring logic; Tab 4 is where you apply it to a decision you're actually facing.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the wayfinding and engagement/energy vocabulary well enough to diagnose your own or a report's stalled career decision.",
+      lo2: "<span class=\"lo-verb\">Trace</span> how a specific dysfunctional belief about career trajectory (e.g., about seniority or switching costs) is producing a stuck pattern, and how reframing it changes the option set.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> between a genuine constraint on a career move (a gravity problem) and an assumed constraint that a change in approach could resolve (an actionable problem).",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> a pending career or leadership decision using the Odyssey Plan's resonance, confidence, resources, and coherence criteria instead of a single-metric comparison.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> a low-risk, time-boxed prototype (an interview, a rotation, a shadow day) that would generate real evidence before you commit to a path.",
+      prompt1: "Over the last two work weeks, identify three tasks or meetings where you were fully engaged (lost track of time) and three that drained your energy despite being routine. What does the pattern suggest about how your role is currently structured?",
+      prompt2: "Name a belief currently constraining how you think about your next career move (e.g., about seniority, industry-switching, or timing). Test it: is it a gravity problem, or a dysfunctional belief you could reframe?",
+      prompt3: "Sketch three 5-year career plans: (A) your current trajectory at your organization or field, (B) a pivot plan if Plan A became unavailable, (C) a wildcard plan ignoring compensation and prestige. Rate each on resonance and resources.",
+      prompt4: "Pick one Odyssey Plan. Design a specific, low-risk prototype (an informational interview, a short project, a rotation, a shadow day) you could realistically arrange within a quarter to test it before committing."
+    }
+  };
+
+  var levelStorageKey = moduleSlug + "_readingLevel";
+  var levelBtns = Array.prototype.slice.call(document.querySelectorAll(".level-btn"));
+
+  function applyLevel(level){
+    var c = levelContent[level] || levelContent.undergrad;
+    var setHTML = function(id, html){ var el = document.getElementById(id); if(el){ el.innerHTML = html; } };
+
+    setHTML("audience-badge", c.audienceBadge);
+    setHTML("overview-p1", c.overviewP1);
+    setHTML("overview-p2", c.overviewP2);
+    setHTML("lo1-text", c.lo1);
+    setHTML("lo2-text", c.lo2);
+    setHTML("lo3-text", c.lo3);
+    setHTML("lo4-text", c.lo4);
+    setHTML("lo5-text", c.lo5);
+    setHTML("prompt1", c.prompt1);
+    setHTML("prompt2", c.prompt2);
+    setHTML("prompt3", c.prompt3);
+    setHTML("prompt4", c.prompt4);
+
+    levelBtns.forEach(function(btn){
+      btn.setAttribute("aria-pressed", btn.getAttribute("data-level") === level ? "true" : "false");
+    });
+  }
+
+  levelBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var level = btn.getAttribute("data-level");
+      applyLevel(level);
+      window.localStorage.setItem(levelStorageKey, level);
+    });
+  });
+
+  var savedLevel = window.localStorage.getItem(levelStorageKey) || "undergrad";
+  applyLevel(savedLevel);
+
+  /* ---------- Tabs ---------- */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  var panels = Array.prototype.slice.call(document.querySelectorAll('[role="tabpanel"]'));
+
+  function selectTab(tab){
+    tabs.forEach(function(t){
+      var selected = t === tab;
+      t.setAttribute("aria-selected", selected ? "true" : "false");
+      t.tabIndex = selected ? 0 : -1;
+    });
+    panels.forEach(function(p){
+      p.hidden = p.id !== tab.getAttribute("aria-controls");
+    });
+  }
+
+  tabs.forEach(function(tab, i){
+    tab.addEventListener("click", function(){ selectTab(tab); });
+    tab.addEventListener("keydown", function(e){
+      var idx = i;
+      if(e.key === "ArrowRight"){ idx = (i + 1) % tabs.length; }
+      else if(e.key === "ArrowLeft"){ idx = (i - 1 + tabs.length) % tabs.length; }
+      else if(e.key === "Home"){ idx = 0; }
+      else if(e.key === "End"){ idx = tabs.length - 1; }
+      else { return; }
+      e.preventDefault();
+      tabs[idx].focus();
+      selectTab(tabs[idx]);
+    });
+  });
+
+  /* ---------- localStorage autosave ---------- */
+  function storageKey(fieldKey){ return moduleSlug + "_" + fieldKey; }
+
+  var fields = Array.prototype.slice.call(document.querySelectorAll("[data-key]"));
+  fields.forEach(function(field){
+    var key = field.getAttribute("data-key");
+    var saved = window.localStorage.getItem(storageKey(key));
+    if(saved !== null){ field.value = saved; }
+
+    var statusEl = document.querySelector('[data-status-for="' + key + '"]');
+    var timer = null;
+
+    field.addEventListener("input", function(){
+      window.localStorage.setItem(storageKey(key), field.value);
+      if(statusEl){
+        statusEl.textContent = "Saved just now";
+        clearTimeout(timer);
+        timer = setTimeout(function(){ statusEl.textContent = ""; }, 1800);
+      }
+    });
+  });
+
+  /* ---------- Copy to clipboard ---------- */
+  var copyBtns = Array.prototype.slice.call(document.querySelectorAll(".btn-copy"));
+  copyBtns.forEach(function(btn){
+    var targetKey = btn.getAttribute("data-target");
+    var targetEl = document.querySelector('[data-key="' + targetKey + '"]');
+    var originalLabel = btn.textContent;
+
+    btn.addEventListener("click", function(){
+      var text = targetEl ? targetEl.value : "";
+      var done = function(){
+        btn.textContent = "Copied!";
+        btn.setAttribute("data-copied", "true");
+        setTimeout(function(){
+          btn.textContent = originalLabel;
+          btn.removeAttribute("data-copied");
+        }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, done);
+      } else {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } catch(e){}
+        document.body.removeChild(ta);
+        done();
+      }
+    });
+  });
+
+  /* ---------- Design toolkit (Tab 2) ---------- */
+  var toolkitSteps = [
+    {rank:1, tier:"foundation", title:"Get Curious", sub:"the mindset shift the rest of the toolkit depends on",
+      analysis:"Curiosity treats the world — and your own life — as full of interesting problems rather than threats to be avoided. Burnett and Evans open the book here because every other tool depends on being willing to notice things rather than judge them prematurely.",
+      apply:"Practice noticing three things a day that genuinely interest you, without asking yet whether they're “practical.”"},
+    {rank:2, tier:"foundation", title:"Track Engagement &amp; Energy", sub:"the Good Time Journal",
+      analysis:"A daily log of activities rated on engagement (how absorbed were you?) and energy (did it fuel you or drain you?). Over two to three weeks, patterns emerge that are far more reliable than trying to introspect your way to “what I'm passionate about.”",
+      apply:"Keep the journal for at least two weeks before drawing conclusions — a single great or terrible day is noise, not signal."},
+    {rank:3, tier:"diagnosis", title:"Write Your Workview &amp; Lifeview", sub:"two short philosophy statements, checked against each other",
+      analysis:"A Workview is a short statement of what work is for; a Lifeview is a short statement of what life is for (meaning, purpose, relationships). Burnett and Evans argue that most people's stress comes from incoherence between the two — a Workview that contradicts your Lifeview will always feel like a fight.",
+      apply:"Write both in under a page each, then check for direct contradictions — that's the coherence problem to solve first."},
+    {rank:4, tier:"diagnosis", title:"Reframe Dysfunctional Beliefs", sub:"separate gravity problems from actionable ones",
+      analysis:"Certain beliefs about work and life sound like wisdom but actually foreclose options before you've explored them (“I should have this figured out by now”). Naming a belief as dysfunctional — and distinguishing it from a true gravity problem — reopens the design space.",
+      apply:"For every “stuck” feeling, write the belief underneath it, then ask: is this actually unchangeable (gravity), or just widely believed (dysfunctional)?"},
+    {rank:5, tier:"testing", title:"Draw Three Odyssey Plans", sub:"Plan A, Plan B, and a wildcard Plan C",
+      analysis:"Sketch three different five-year versions of your life: Plan A (your current path, taken further), Plan B (what you'd do if Plan A stopped being an option), and Plan C (the “wildcard” — what you'd do if money and image weren't factors). Score each on resonance, confidence, resources, and coherence.",
+      apply:"Resist collapsing to one plan too early — the value is in having three genuinely different, viable options to compare and combine."},
+    {rank:6, tier:"testing", title:"Prototype Before You Commit", sub:"conversations, experiences, and “good enough” decisions",
+      analysis:"Before committing years to a path, run cheap tests: a Life Design Interview (a structured conversation with someone living a version of that path) or a Prototype Experience (a short, low-stakes trial — a weekend, a volunteer stint, a side project). Then choose with “good enough” decision-making rather than endless analysis.",
+      apply:"Run at least one prototype conversation and one prototype experience per Odyssey Plan before ranking them — untested plans are guesses, not data."}
+  ];
+
+  var stageLabel = {foundation:"Foundation", diagnosis:"Diagnosis", testing:"Testing &amp; Choosing"};
+  var listEl = document.getElementById("toolkit-list");
+  var frag = document.createDocumentFragment();
+
+  toolkitSteps.forEach(function(step){
+    var item = document.createElement("div");
+    item.className = "toolkit-item";
+    item.setAttribute("data-open", "false");
+
+    var bodyId = "tk-body-" + step.rank;
+
+    var toggle = document.createElement("button");
+    toggle.className = "toolkit-toggle";
+    toggle.type = "button";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-controls", bodyId);
+    toggle.innerHTML =
+      '<span class="toolkit-rank">#' + step.rank + '</span>' +
+      '<span class="lt-title">' + step.title + ' <span style="font-weight:400;color:var(--muted);">— ' + step.sub + '</span>' +
+      '<span class="toolkit-stage stage-' + step.tier + '">' + stageLabel[step.tier] + '</span></span>' +
+      '<span class="lt-icon">▼</span>';
+
+    var body = document.createElement("div");
+    body.className = "toolkit-body";
+    body.id = bodyId;
+    body.hidden = true;
+    body.innerHTML =
+      '<p><span class="lb-label">Analysis</span>' + step.analysis + '</p>' +
+      '<p><span class="lb-label">How to Apply It</span>' + step.apply + '</p>';
+
+    toggle.addEventListener("click", function(){
+      var isOpen = item.getAttribute("data-open") === "true";
+      item.setAttribute("data-open", isOpen ? "false" : "true");
+      toggle.setAttribute("aria-expanded", isOpen ? "false" : "true");
+      body.hidden = isOpen;
+    });
+
+    item.appendChild(toggle);
+    item.appendChild(body);
+    frag.appendChild(item);
+  });
+
+  listEl.appendChild(frag);
+})();
+</script>
+</body>
+</html>
