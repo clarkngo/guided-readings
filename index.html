@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guided Readings</title>
+<style>
+  :root{
+    --text:#2c2013;
+    --bg:#faf5ea;
+    --accent:#a8461f;
+    --accent-dark:#832f11;
+    --accent-soft:#f3e0cf;
+    --border:#e6dbc4;
+    --card-bg:#fffcf5;
+    --muted:#7a6a54;
+    --serif: Palatino, "Palatino Linotype", "Iowan Old Style", "Book Antiqua", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--serif);
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:56px 20px 80px;}
+  h1{font-size:clamp(1.9rem,3.4vw,2.5rem);margin:0 0 8px;letter-spacing:-.01em;font-weight:600;font-style:italic;}
+  .subtitle{color:var(--muted);font-size:1.05rem;margin:0 0 40px;font-family:var(--sans);}
+
+  .module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;}
+  .module-card{
+    display:block;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;
+    padding:22px 24px;text-decoration:none;color:inherit;transition:border-color .15s, transform .15s;
+  }
+  .module-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .module-card .tag{
+    display:inline-block;font-family:var(--sans);font-size:11px;font-weight:700;color:var(--accent-dark);
+    background:var(--accent-soft);border-radius:5px;padding:2px 8px;margin-bottom:10px;letter-spacing:.04em;
+  }
+  .module-card h2{margin:0 0 6px;font-size:1.2rem;font-style:italic;}
+  .module-card .author{font-family:var(--sans);color:var(--muted);font-size:.85rem;margin:0 0 10px;}
+  .module-card p.desc{margin:0;font-size:.92rem;color:var(--text);}
+  .module-card .go{
+    display:inline-block;margin-top:14px;font-family:var(--sans);font-size:.82rem;font-weight:600;
+    color:var(--accent-dark);
+  }
+
+  footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--border);font-family:var(--sans);font-size:.78rem;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Guided Readings</h1>
+  <p class="subtitle">Interactive companions for working through a book alongside the text — not instead of it.</p>
+
+  <div class="module-grid">
+    <a class="module-card" href="thinking-in-systems-meadows/">
+      <span class="tag">Systems Thinking</span>
+      <h2>Thinking in Systems: A Primer</h2>
+      <p class="author">Donella H. Meadows</p>
+      <p class="desc">Stocks, flows, and feedback loops; the twelve leverage points; system traps; and reflection exercises for a real system in your life.</p>
+      <span class="go">Open the module &rarr;</span>
+    </a>
+
+    <a class="module-card" href="designing-your-life-burnett-evans/">
+      <span class="tag">Design Thinking &middot; Career &amp; Life Planning</span>
+      <h2>Designing Your Life</h2>
+      <p class="author">Bill Burnett &amp; Dave Evans</p>
+      <p class="desc">Wayfinding, dysfunctional beliefs, the Good Time Journal, Odyssey Plans, and prototyping exercises for your own path.</p>
+      <span class="go">Open the module &rarr;</span>
+    </a>
+  </div>
+
+  <footer>guided-readings &middot; each module is a single standalone page; your answers are saved only in your own browser.</footer>
+</div>
+</body>
+</html>
