@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nudge — Guided Reading Companion</title>
+<style>
+  :root{
+    --text:#2c2013;
+    --bg:#faf5ea;
+    --accent:#a8461f;
+    --accent-dark:#832f11;
+    --accent-soft:#f3e0cf;
+    --border:#e6dbc4;
+    --card-bg:#fffcf5;
+    --muted:#7a6a54;
+    --success:#4d6b3f;
+    --success-soft:#e6ecdc;
+    --warn:#95591c;
+    --warn-soft:#f3e6c9;
+    --serif: Palatino, "Palatino Linotype", "Iowan Old Style", "Book Antiqua", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--serif);
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 80px;}
+  a{color:var(--accent);}
+
+  /* Header */
+  header.page-header{margin-bottom:36px;}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);
+    font-size:12.5px;font-weight:600;letter-spacing:.02em;
+    padding:5px 12px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent-dark);
+    border:1px solid #e3c8a8;
+  }
+  .badge.muted{background:#f2ede0;color:var(--muted);border-color:var(--border);}
+  .badge.success{background:var(--success-soft);color:#3d5732;border-color:#cfdcc0;}
+
+  h1{font-size:clamp(1.9rem,3.4vw,2.5rem);margin:0 0 4px;letter-spacing:-.01em;font-weight:600;font-style:italic;}
+  .subtitle{color:var(--muted);font-size:1.05rem;margin:0 0 14px;font-style:italic;}
+  .citation{
+    font-size:.88rem;color:var(--muted);font-family:var(--sans);
+    border-left:3px solid var(--accent-soft);padding-left:12px;margin-bottom:22px;
+  }
+  .overview p{margin:0 0 12px;font-size:.98rem;}
+  .overview{margin-bottom:18px;}
+
+  .privacy-note{
+    display:flex;gap:10px;align-items:flex-start;
+    background:var(--card-bg);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:8px;padding:12px 14px;font-size:.87rem;color:var(--muted);margin-bottom:8px;
+  }
+  .privacy-note strong{color:var(--text);}
+
+  /* Reading level toggle */
+  .level-picker{
+    display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:18px 0 22px;
+    font-family:var(--sans);
+  }
+  .level-picker .lp-label{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+  .level-group{display:inline-flex;background:var(--accent-soft);border:1px solid #e3c8a8;border-radius:999px;padding:3px;gap:2px;}
+  .level-btn{
+    appearance:none;border:none;background:transparent;cursor:pointer;
+    font-family:var(--sans);font-size:.82rem;font-weight:600;color:var(--accent-dark);
+    padding:6px 14px;border-radius:999px;transition:background .15s,color .15s;
+  }
+  .level-btn:hover{background:#eccbaa;}
+  .level-btn[aria-pressed="true"]{background:var(--accent);color:#fffaf0;}
+  .level-btn:focus-visible{outline:2px solid var(--accent-dark);outline-offset:2px;}
+  .level-caption{font-family:var(--sans);font-size:.8rem;color:var(--muted);margin:-10px 0 18px;}
+
+  /* Learning outcomes */
+  .lo-section{margin:30px 0 38px;}
+  .lo-section h2{font-size:1.15rem;margin:0 0 4px;}
+  .lo-section .lo-sub{color:var(--muted);font-size:.88rem;margin:0 0 16px;}
+  .lo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;}
+  .lo-card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:10px;
+    padding:14px 16px;font-size:.88rem;
+  }
+  .lo-card .lo-tag{
+    display:inline-block;font-family:var(--sans);font-size:11px;font-weight:700;color:var(--accent-dark);
+    background:var(--accent-soft);border-radius:5px;padding:2px 7px;margin-bottom:8px;
+    letter-spacing:.04em;
+  }
+  .lo-card .lo-verb{font-weight:700;color:var(--text);}
+
+  /* Tabs */
+  .tabs{
+    display:flex;gap:4px;border-bottom:2px solid var(--border);
+    overflow-x:auto;margin-bottom:24px;-ms-overflow-style:none;scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab-btn{
+    appearance:none;border:none;background:transparent;cursor:pointer;
+    font-family:var(--sans);font-size:.88rem;font-weight:600;color:var(--muted);
+    padding:11px 16px;white-space:nowrap;border-bottom:2px solid transparent;
+    margin-bottom:-2px;transition:color .15s, border-color .15s;
+  }
+  .tab-btn:hover{color:var(--accent-dark);}
+  .tab-btn[aria-selected="true"]{color:var(--accent-dark);border-bottom-color:var(--accent);}
+  .tab-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;}
+  .tab-meta{display:block;font-weight:400;font-size:10.5px;color:var(--muted);margin-top:2px;letter-spacing:.02em;}
+
+  .panel{animation:fade .15s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
+  .panel h2{font-size:1.3rem;margin:0 0 6px;}
+  .panel .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 22px;}
+
+  /* Generic cards */
+  .card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:10px;
+    padding:18px 20px;margin-bottom:14px;
+  }
+  .card h3{margin:0 0 8px;font-size:1.02rem;}
+  .card p{margin:0 0 8px;font-size:.92rem;}
+  .card p:last-child{margin-bottom:0;}
+
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:24px;}
+
+  .theme-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .theme-list li{
+    display:flex;gap:12px;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;
+    padding:12px 14px;font-size:.9rem;
+  }
+  .theme-num{
+    flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;
+  }
+
+  .tension-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin-bottom:24px;}
+  .tension-col{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+  .tension-col h4{margin:0 0 8px;font-size:.95rem;}
+  .tension-col ul{margin:0;padding-left:18px;font-size:.87rem;}
+  .tension-col li{margin-bottom:5px;}
+  .tension-vs{
+    display:flex;align-items:center;justify-content:center;padding:0 14px;
+    font-weight:700;color:var(--muted);font-size:.8rem;
+  }
+  @media(max-width:680px){
+    .tension-grid{grid-template-columns:1fr;}
+    .tension-vs{padding:8px 0;}
+  }
+
+  /* NUDGES toolkit list */
+  .toolkit-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px;}
+  .toolkit-item{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .toolkit-toggle{
+    width:100%;display:flex;align-items:center;gap:14px;text-align:left;
+    background:transparent;border:none;cursor:pointer;padding:14px 16px;font-family:var(--sans);
+  }
+  .toolkit-rank{
+    flex:0 0 auto;width:34px;height:34px;border-radius:8px;background:var(--accent-soft);color:var(--accent-dark);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;
+  }
+  .toolkit-toggle .lt-title{flex:1;font-weight:600;font-size:.94rem;color:var(--text);}
+  .toolkit-toggle .lt-icon{color:var(--muted);transition:transform .15s;font-size:.8rem;}
+  .toolkit-item[data-open="true"] .lt-icon{transform:rotate(180deg);}
+  .toolkit-body{padding:0 16px 16px 64px;font-size:.88rem;}
+  .toolkit-body p{margin:0 0 8px;}
+  .toolkit-body .lb-label{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-dark);display:block;margin-bottom:3px;}
+  .toolkit-stage{
+    font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:8px;white-space:nowrap;
+  }
+  .stage-foundation{background:#f2ede0;color:var(--muted);}
+  .stage-diagnosis{background:var(--warn-soft);color:var(--warn);}
+  .stage-testing{background:var(--success-soft);color:#3d5732;}
+
+  /* Close reading concept cards */
+  .concept-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;}
+  .concept-head{padding:14px 18px;border-bottom:1px solid var(--border);background:#f5efe1;}
+  .concept-head h3{margin:0;font-size:1rem;}
+  .concept-cols{display:grid;grid-template-columns:1fr 1fr;}
+  .concept-col{padding:16px 18px;font-size:.88rem;}
+  .concept-col:first-child{border-right:1px solid var(--border);}
+  .concept-col .col-label{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);display:block;margin-bottom:8px;}
+  @media(max-width:680px){
+    .concept-cols{grid-template-columns:1fr;}
+    .concept-col:first-child{border-right:none;border-bottom:1px solid var(--border);}
+  }
+
+  /* Reflection */
+  .reflection-item{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:16px;}
+  .reflection-item .rq-tag{font-family:var(--sans);font-size:11px;font-weight:700;color:var(--accent-dark);background:var(--accent-soft);padding:2px 8px;border-radius:5px;letter-spacing:.03em;}
+  .reflection-item p.prompt{margin:8px 0 12px;font-size:.94rem;font-weight:600;}
+  textarea{
+    width:100%;min-height:110px;resize:vertical;font-family:var(--sans);font-size:.9rem;
+    border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);
+    background:#f5efe1;
+  }
+  textarea:focus{outline:2px solid var(--accent);outline-offset:1px;background:var(--card-bg);}
+  .reflection-actions{display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px;}
+  .save-status{font-family:var(--sans);font-size:.76rem;color:var(--muted);}
+  .btn{
+    appearance:none;border:1px solid var(--border);background:var(--card-bg);color:var(--text);
+    font-family:var(--sans);font-size:.82rem;font-weight:600;padding:7px 13px;border-radius:7px;cursor:pointer;
+    transition:background .15s, border-color .15s;
+  }
+  .btn:hover{border-color:var(--accent);color:var(--accent-dark);}
+  .btn.btn-copy[data-copied="true"]{background:var(--success-soft);border-color:#cfdcc0;color:#3d5732;}
+
+  /* Glossary */
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;}
+  .term-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:13px 15px;}
+  .term-card dt{font-weight:700;font-size:.88rem;margin-bottom:4px;color:var(--text);}
+  .term-card dd{margin:0;font-size:.83rem;color:var(--muted);}
+  .glossary-group-title{font-family:var(--sans);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:26px 0 10px;}
+  .glossary-group-title:first-child{margin-top:0;}
+
+  footer.page-footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--border);font-size:.78rem;color:var(--muted);text-align:center;}
+</style>
+</head>
+<body data-module="nudge-thaler-sunstein">
+<div class="wrap">
+
+  <header class="page-header">
+    <div class="badges">
+      <span class="badge">Behavioral Economics · Choice Architecture</span>
+      <span class="badge muted" id="audience-badge">Undergraduate &amp; Graduate · Behavioral Economics, Public Policy, Product Design</span>
+      <span class="badge success">5 Learning Outcomes</span>
+    </div>
+    <h1>Nudge: Improving Decisions About Health, Wealth, and Happiness</h1>
+    <p class="subtitle">A Guided Reading Companion</p>
+    <p class="citation">
+      Richard H. Thaler &amp; Cass R. Sunstein · Penguin Books, 2008 (Final Edition, 2021)
+    </p>
+
+    <div class="level-picker">
+      <span class="lp-label">Reading Level</span>
+      <div class="level-group" role="group" aria-label="Reading level">
+        <button type="button" class="level-btn" data-level="intro" aria-pressed="false">Intro / High School</button>
+        <button type="button" class="level-btn" data-level="undergrad" aria-pressed="true">Undergrad / Grad</button>
+        <button type="button" class="level-btn" data-level="exec" aria-pressed="false">Executive / Professional</button>
+      </div>
+    </div>
+    <p class="level-caption">Adjusts the overview, learning outcomes, and reflection prompts below — everything else on this page stays the same at every level.</p>
+
+    <div class="overview">
+      <p id="overview-p1"></p>
+      <p id="overview-p2"></p>
+    </div>
+
+    <div class="privacy-note">
+      <span>🔒</span>
+      <span><strong>Your answers stay on this device.</strong> Everything you type in Tab 4 is saved only
+      to your browser's local storage on this page — nothing is sent to a server, an instructor, or any
+      third party unless you explicitly copy and submit it yourself.</span>
+    </div>
+  </header>
+
+  <section class="lo-section">
+    <h2>Learning Outcomes</h2>
+    <p class="lo-sub">By the end of this module, you should be able to:</p>
+    <div class="lo-grid">
+      <div class="lo-card">
+        <span class="lo-tag">LO1</span>
+        <p id="lo1-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO2</span>
+        <p id="lo2-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO3</span>
+        <p id="lo3-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO4</span>
+        <p id="lo4-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO5</span>
+        <p id="lo5-text"></p>
+      </div>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="Module sections">
+    <button class="tab-btn" role="tab" id="tab-btn-1" aria-controls="tab-1" aria-selected="true" tabindex="0">
+      Core Framework<span class="tab-meta">Supports LO1 · LO3</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-2" aria-controls="tab-2" aria-selected="false" tabindex="-1">
+      Choice Architecture<span class="tab-meta">Supports LO3 · LO4</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-3" aria-controls="tab-3" aria-selected="false" tabindex="-1">
+      Close Reading<span class="tab-meta">Supports LO2 · LO4</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-4" aria-controls="tab-4" aria-selected="false" tabindex="-1">
+      Reflection<span class="tab-meta">Supports LO2 · LO5</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-5" aria-controls="tab-5" aria-selected="false" tabindex="-1">
+      Glossary<span class="tab-meta">Supports all LOs</span>
+    </button>
+  </nav>
+
+  <!-- TAB 1 : CORE FRAMEWORK -->
+  <section class="panel" id="tab-1" role="tabpanel" aria-labelledby="tab-btn-1" tabindex="0">
+    <h2>Core Framework &amp; Mental Models</h2>
+    <p class="panel-sub">The vocabulary Thaler and Sunstein build early in the book, and the central argument the whole framework rests on.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>Econ vs. Human</h3>
+        <p>An <strong>Econ</strong> is the perfectly rational, self-interested actor assumed by classical
+        economics — never errs, never procrastinates, always computes the optimal choice. A
+        <strong>Human</strong> is what people actually are: boundedly rational, influenced by framing and
+        defaults, and prone to predictable errors.</p>
+      </div>
+      <div class="card">
+        <h3>Choice Architecture</h3>
+        <p>The design of the environment in which people make decisions — the order of items on a menu, the
+        default option on a form. Choice architecture is unavoidable: some structure exists any time a
+        choice is presented, whether anyone designed it deliberately or not.</p>
+      </div>
+      <div class="card">
+        <h3>Nudge</h3>
+        <p>Any feature of choice architecture that predictably alters behavior without forbidding any
+        option or significantly changing economic incentives. To count as a nudge, it must be
+        <strong>easy and cheap to avoid</strong> — a default you can opt out of, not a mandate.</p>
+      </div>
+      <div class="card">
+        <h3>Libertarian Paternalism</h3>
+        <p>Thaler and Sunstein's proposed stance: choice architects should steer people toward choices that
+        improve their own welfare (paternalism), while preserving full freedom to choose otherwise
+        (libertarian). The two halves are meant to coexist, not cancel out.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">The Central Tension: The Econ Model vs. Behavioral Reality</h3>
+    <div class="tension-grid">
+      <div class="tension-col">
+        <h4>The Econ Model (Classical Economics)</h4>
+        <ul>
+          <li>People maximize expected utility using all available information.</li>
+          <li>Decisions are unaffected by irrelevant framing — only the actual options matter.</li>
+          <li>More choices and more information are always (weakly) better.</li>
+          <li>A "neutral" default is assumed possible, so no deliberate design is needed.</li>
+        </ul>
+      </div>
+      <div class="tension-vs">VS</div>
+      <div class="tension-col">
+        <h4>Thaler &amp; Sunstein's Human Model</h4>
+        <ul>
+          <li>People rely on mental shortcuts that are usually useful but produce predictable errors.</li>
+          <li>Framing, defaults, and choice structure change what people choose, even when the substantive options are identical.</li>
+          <li>Too many choices can cause paralysis or decision avoidance ("choice overload").</li>
+          <li>Because choice architecture always exists, someone should design it deliberately and honestly.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">Five Guiding Themes to Track While You Read</h3>
+    <ul class="theme-list">
+      <li><span class="theme-num">1</span><span><strong>There is no neutral choice architecture.</strong> Some default or ordering always exists — the only question is whether it's designed thoughtfully.</span></li>
+      <li><span class="theme-num">2</span><span><strong>Defaults are sticky.</strong> Because of inertia, status quo bias, and implied endorsement, whatever is set as the default is what most people end up with.</span></li>
+      <li><span class="theme-num">3</span><span><strong>System 1 drives most everyday decisions.</strong> The fast, automatic system — not careful deliberation — governs most choices, which is exactly where choice architecture has its biggest effect.</span></li>
+      <li><span class="theme-num">4</span><span><strong>A nudge must remain easy to reject.</strong> Preserving freedom of choice, not just calling something helpful, is what separates a nudge from a mandate.</span></li>
+      <li><span class="theme-num">5</span><span><strong>Publicity is the ethical test.</strong> A nudge should be something the choice architect is willing to defend openly, not something that only works if hidden.</span></li>
+    </ul>
+  </section>
+
+  <!-- TAB 2 : CHOICE ARCHITECTURE (NUDGES) -->
+  <section class="panel" id="tab-2" role="tabpanel" aria-labelledby="tab-btn-2" tabindex="0" hidden>
+    <h2>The NUDGES Checklist</h2>
+    <p class="panel-sub">Thaler and Sunstein's six principles of good choice architecture, spelling out N-U-D-G-E-S — click each to expand the analysis and how to apply it.</p>
+
+    <div class="toolkit-list" id="toolkit-list"></div>
+  </section>
+
+  <!-- TAB 3 : CLOSE READING -->
+  <section class="panel" id="tab-3" role="tabpanel" aria-labelledby="tab-btn-3" tabindex="0" hidden>
+    <h2>Close Reading &amp; Technical Deep Dive</h2>
+    <p class="panel-sub">A slower, side-by-side pass on the mechanics that make the rest of the framework work.</p>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>1. The Default Effect — Why Small Design Choices Have Outsized Power</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <p>Organ donation rates differ dramatically between countries with nearly identical underlying
+          attitudes toward donation, based almost entirely on whether the enrollment form defaults to
+          "opt in" (must actively choose to donate) or "opt out" (presumed consent, must actively choose
+          not to donate). Countries using opt-out defaults consistently show far higher donor registration
+          rates than nearly identical opt-in countries.</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>Three separate mechanisms combine to make defaults sticky: (1) <strong>inertia</strong> —
+          changing anything requires action, and most people don't act; (2) <strong>implied
+          endorsement</strong> — a default set by an institution reads as an implicit recommendation; (3)
+          <strong>loss-averse framing</strong> — moving away from a default can feel like giving something
+          up, even when the "something" is identical either way. Because these mechanisms operate through
+          System 1 rather than deliberate reasoning, simply telling people "you can always opt out" does
+          very little to offset the default's pull.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>2. Nudge vs. Mandate — Where the Line Actually Sits</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <p>A cafeteria that puts fruit at eye level and candy on a bottom shelf is nudging; a cafeteria
+          that removes candy from the menu entirely is not nudging — it's banning. A retirement plan that
+          automatically enrolls employees (who can opt out any time) is a nudge; a retirement plan that
+          requires contributions by law is a mandate.</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>Thaler and Sunstein's operational test has two parts: (1) the option must remain fully and
+          easily available — "easy and cheap to avoid" — and (2) the economic incentives attached to each
+          option must not be meaningfully changed. A large tax or fine attached to the "wrong" choice fails
+          this test, even if the choice is technically still available, because it functions economically
+          like a near-mandate. This distinction is also the basis of their defense against the "slippery
+          slope to paternalism" critique: a true nudge, by construction, can't slide into coercion without
+          ceasing to be a nudge.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4 : REFLECTION -->
+  <section class="panel" id="tab-4" role="tabpanel" aria-labelledby="tab-btn-4" tabindex="0" hidden>
+    <h2>Reflection &amp; Synthesis Exercises</h2>
+    <p class="panel-sub">Find, evaluate, and design real nudges. Your answers autosave to this browser as you type.</p>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 1 · Supports LO1 · LO2</span>
+      <p class="prompt" id="prompt1"></p>
+      <textarea data-key="reflect1" aria-label="Reflection 1 response" placeholder="e.g., My phone's default notification settings kept me opted into things I never chose — I never went looking to change them..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect1">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect1"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 2 · Supports LO3</span>
+      <p class="prompt" id="prompt2"></p>
+      <textarea data-key="reflect2" aria-label="Reflection 2 response" placeholder="e.g., A soda tax changes the price meaningfully, so it's closer to an incentive/mandate than a pure nudge..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect2">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect2"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 3 · Supports LO4</span>
+      <p class="prompt" id="prompt3"></p>
+      <textarea data-key="reflect3" aria-label="Reflection 3 response" placeholder="e.g., Good Defaults, but violates Give Feedback — I never see how my choice compares to others until it's too late to change..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect3">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect3"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 4 · Supports LO5</span>
+      <p class="prompt" id="prompt4"></p>
+      <textarea data-key="reflect4" aria-label="Reflection 4 response" placeholder="e.g., Default new employees into the higher retirement contribution rate, with a one-click opt-down available at any time..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect4">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect4"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 5 : GLOSSARY -->
+  <section class="panel" id="tab-5" role="tabpanel" aria-labelledby="tab-btn-5" tabindex="0" hidden>
+    <h2>Reference &amp; Glossary</h2>
+    <p class="panel-sub">Core terms and the biases and effects the book's nudges are designed around.</p>
+
+    <div class="glossary-group-title">Core Vocabulary</div>
+    <div class="glossary-grid">
+      <div class="term-card"><dt>Econ</dt><dd>The purely rational, self-interested actor assumed by classical economic theory — never errs, never procrastinates, always optimizes.</dd></div>
+      <div class="term-card"><dt>Human</dt><dd>A real decision-maker: boundedly rational, influenced by framing and defaults, and prone to predictable errors — the actual subject of behavioral economics.</dd></div>
+      <div class="term-card"><dt>System 1 / System 2</dt><dd>The fast, automatic, intuitive mode of thinking (System 1) versus the slower, effortful, deliberate mode (System 2); most everyday choices run on System 1.</dd></div>
+      <div class="term-card"><dt>Choice Architecture</dt><dd>The design of the environment in which decisions are made — unavoidable, since some structure or default always exists.</dd></div>
+      <div class="term-card"><dt>Choice Architect</dt><dd>Anyone responsible for organizing the context in which people make decisions — a form designer, a policymaker, a store manager.</dd></div>
+      <div class="term-card"><dt>Nudge</dt><dd>Any feature of choice architecture that predictably alters behavior without forbidding options or significantly changing economic incentives.</dd></div>
+      <div class="term-card"><dt>Libertarian Paternalism</dt><dd>The stance that choice architects should steer people toward welfare-improving choices while fully preserving freedom to choose otherwise.</dd></div>
+      <div class="term-card"><dt>Publicity Principle</dt><dd>The ethical test that a nudge should be something its designer is willing to defend openly and publicly, not something that only works if hidden.</dd></div>
+    </div>
+
+    <div class="glossary-group-title">Biases &amp; Effects</div>
+    <div class="glossary-grid">
+      <div class="term-card"><dt>Default Effect</dt><dd>The tendency for whatever option is pre-selected to become the outcome for most people, driven by inertia, implied endorsement, and loss-averse framing.</dd></div>
+      <div class="term-card"><dt>Status Quo Bias</dt><dd>A preference for the current state of affairs, making any change feel like a loss even when the alternative is objectively better.</dd></div>
+      <div class="term-card"><dt>Loss Aversion</dt><dd>The tendency to weigh losses roughly twice as heavily as equivalent gains, making people disproportionately resistant to changes framed as giving something up.</dd></div>
+      <div class="term-card"><dt>Anchoring</dt><dd>The tendency for an initial number or reference point to disproportionately influence subsequent judgments, even when the anchor is arbitrary.</dd></div>
+      <div class="term-card"><dt>Framing Effect</dt><dd>The tendency for logically identical choices to be evaluated differently depending on how they are presented (e.g., "90% survival" vs. "10% mortality").</dd></div>
+      <div class="term-card"><dt>Choice Overload</dt><dd>The tendency for too many options or too much complexity to cause decision paralysis or avoidance rather than better decisions.</dd></div>
+      <div class="term-card"><dt>Optimism Bias</dt><dd>The tendency to overestimate the likelihood of positive outcomes and underestimate negative ones for oneself specifically.</dd></div>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    Guided Reading Companion · <em>Nudge</em>, Richard H. Thaler &amp; Cass R. Sunstein (Penguin Books, 2008 / Final Edition 2021) · Answers stored locally in your browser only.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var moduleSlug = document.body.getAttribute("data-module");
+
+  /* ---------- Reading level content ---------- */
+  var levelContent = {
+    intro: {
+      audienceBadge: "Intro / High School · Decision-Making Basics",
+      overviewP1: "<em>Nudge</em> is about a simple but powerful idea: the way choices are set up — what's the default, what's listed first, how something is worded — changes what people actually pick, even when nothing about the real options changes. Richard Thaler and Cass Sunstein call this \"choice architecture,\" and they argue that since it always exists somehow, it's better to design it on purpose to help people, while still letting them choose whatever they want.",
+      overviewP2: "This page is a study guide to use next to the book. Tab 1 introduces the big idea. Tab 2 walks through six rules for designing choices well. Tab 3 looks closer at two important ideas. Tab 4 has you find and design real nudges, and Tab 5 is a glossary you can check any time.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the difference between a perfectly rational \"Econ\" and a real \"Human,\" and what \"choice architecture\" means, using an everyday example.",
+      lo2: "<span class=\"lo-verb\">Trace</span> how a specific mental shortcut (like sticking with a default, or being swayed by how something is worded) leads to a predictable decision.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> a nudge (easy to skip, no real penalty) from a rule that actually forces you into one choice.",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> a real app, form, or system using six simple rules for good choice design.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> one specific nudge you'd design to help people make a better decision, and explain why it's fair, not sneaky.",
+      prompt1: "Think of an app, subscription, or form where there was a \"pre-selected\" option you didn't change. Why do you think you kept it, even if you weren't sure it was the best choice for you?",
+      prompt2: "Pick a rule or design at your school or in an app you use. Is it something you can easily opt out of (a nudge), or does it basically force you into one choice (not really a nudge)?",
+      prompt3: "Pick an app or form you use often. Using the six ideas from Tab 2 (like Defaults and Give Feedback), name one thing it does well and one thing it could improve.",
+      prompt4: "If you could design one nudge to help people your age make a better decision (like saving money, eating healthier, or studying), what would it be, and would you be comfortable telling everyone exactly how it works?"
+    },
+    undergrad: {
+      audienceBadge: "Undergraduate &amp; Graduate · Behavioral Economics, Public Policy, Product Design",
+      overviewP1: "<em>Nudge</em> is Richard Thaler and Cass Sunstein's argument that the way choices are presented — the \"choice architecture\" — powerfully and predictably shapes what people decide, even when every option remains fully available. Drawing on behavioral economics and psychology, they show that real people (Humans) systematically depart from the perfectly rational decision-making of textbook economic actors (Econs), which means defaults, framing, and structure aren't neutral — someone is always designing the choice environment, whether deliberately or not.",
+      overviewP2: "This module works alongside the book. Tab 1 introduces the vocabulary — Econs vs. Humans, System 1 vs. System 2, choice architecture — and the central argument for \"libertarian paternalism.\" Tab 2 walks the six principles of good choice architecture (the NUDGES checklist) as an interactive set. Tab 3 does a closer read of the default effect and how nudges differ from mandates. Tab 4 asks you to design and evaluate real nudges, and Tab 5 is a glossary. Work through the tabs in order the first time.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the core vocabulary — Econs vs. Humans, System 1 vs. System 2 thinking, choice architecture, and libertarian paternalism — from a plain-language example.",
+      lo2: "<span class=\"lo-verb\">Trace</span> how a specific bias (status quo bias, loss aversion, framing, anchoring) produces a predictable, exploitable pattern in real decision-making.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> a nudge from a mandate, ban, or economic incentive using Thaler and Sunstein's definition (easy and cheap to avoid, no significant change to economic incentives).",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> a real or proposed choice architecture (a default, a form, an app) against the NUDGES checklist for good choice architecture.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> a nudge for a real decision problem, and defend it against the manipulation / \"nanny state\" critique using the publicity principle.",
+      prompt1: "Think of a decision where the default option shaped what you (or someone you know) ended up doing — a subscription, an app setting, an enrollment form. What was the default, and do you think you would have chosen differently without it?",
+      prompt2: "Pick a real-world policy or design choice and evaluate it against Thaler and Sunstein's definition: is it a true nudge (easy/cheap to avoid, no major incentive change), or does it function more like a mandate or a strong incentive in disguise?",
+      prompt3: "Pick a real choice architecture you interact with (a retirement enrollment flow, a food delivery app's checkout, a course registration system). Run it through the NUDGES checklist from Tab 2 — which principles does it get right, and which does it violate?",
+      prompt4: "Design a specific nudge for a real decision problem of your choosing. Describe the default or framing change, and then defend it against the \"manipulation\" critique using the publicity principle — could you explain this nudge publicly without shame?"
+    },
+    exec: {
+      audienceBadge: "Executive / Professional · Product, Policy &amp; Organizational Design",
+      overviewP1: "<em>Nudge</em> is Richard Thaler and Cass Sunstein's foundational text in behavioral economics for anyone who designs the environment other people make decisions in — product managers, policy designers, HR and benefits teams, UX designers. Their core claim: choice architecture is never neutral, so the practical question isn't whether to influence decisions, but whether to do it deliberately, transparently, and in the decision-maker's own interest, or leave it to accident and inertia.",
+      overviewP2: "Use this page as a working reference alongside the book. Tab 1 gives you the vocabulary — libertarian paternalism, System 1/System 2, choice architecture — to frame design and policy decisions. Tab 2 is the highest-value tab for practitioners: the six-part NUDGES checklist for auditing or designing any choice environment. Tab 3 backs that up with the mechanics of the default effect and the nudge/mandate distinction; Tab 4 is where you apply it to a real system you own.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the Econ/Human distinction and the concept of choice architecture well enough to frame a design or policy discussion in these terms.",
+      lo2: "<span class=\"lo-verb\">Trace</span> a specific business or policy outcome (low enrollment, poor plan selection, wasted spend) back to a specific bias or default in the surrounding choice architecture.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> a genuine nudge from a mandate or disguised incentive when evaluating a proposed intervention, using Thaler and Sunstein's operational test.",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> a choice architecture your organization owns against the NUDGES checklist and identify the highest-leverage fix.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> a specific nudge for a real organizational problem, and write a publicity-principle defense you could stand behind if it were made public.",
+      prompt1: "Identify a default setting in a product, policy, or process your organization controls (a form, an enrollment flow, an opt-in). What behavior does that default currently produce, and is it the outcome you'd design for deliberately?",
+      prompt2: "Audit a recent \"nudge\" initiative at your organization. Does it meet the actual test — easy to avoid, no significant incentive change — or has it drifted into something closer to a mandate?",
+      prompt3: "Select a choice architecture your team owns (an onboarding flow, a benefits enrollment, an internal tool). Score it against each of the six NUDGES principles and identify the single highest-impact fix.",
+      prompt4: "Propose a specific nudge for a real problem your organization faces. Write a one-paragraph justification you could defend publicly (the \"publicity principle\") if a stakeholder or journalist asked how and why it works."
+    }
+  };
+
+  var levelStorageKey = moduleSlug + "_readingLevel";
+  var levelBtns = Array.prototype.slice.call(document.querySelectorAll(".level-btn"));
+
+  function applyLevel(level){
+    var c = levelContent[level] || levelContent.undergrad;
+    var setHTML = function(id, html){ var el = document.getElementById(id); if(el){ el.innerHTML = html; } };
+
+    setHTML("audience-badge", c.audienceBadge);
+    setHTML("overview-p1", c.overviewP1);
+    setHTML("overview-p2", c.overviewP2);
+    setHTML("lo1-text", c.lo1);
+    setHTML("lo2-text", c.lo2);
+    setHTML("lo3-text", c.lo3);
+    setHTML("lo4-text", c.lo4);
+    setHTML("lo5-text", c.lo5);
+    setHTML("prompt1", c.prompt1);
+    setHTML("prompt2", c.prompt2);
+    setHTML("prompt3", c.prompt3);
+    setHTML("prompt4", c.prompt4);
+
+    levelBtns.forEach(function(btn){
+      btn.setAttribute("aria-pressed", btn.getAttribute("data-level") === level ? "true" : "false");
+    });
+  }
+
+  levelBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var level = btn.getAttribute("data-level");
+      applyLevel(level);
+      window.localStorage.setItem(levelStorageKey, level);
+    });
+  });
+
+  var savedLevel = window.localStorage.getItem(levelStorageKey) || "undergrad";
+  applyLevel(savedLevel);
+
+  /* ---------- Tabs ---------- */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  var panels = Array.prototype.slice.call(document.querySelectorAll('[role="tabpanel"]'));
+
+  function selectTab(tab){
+    tabs.forEach(function(t){
+      var selected = t === tab;
+      t.setAttribute("aria-selected", selected ? "true" : "false");
+      t.tabIndex = selected ? 0 : -1;
+    });
+    panels.forEach(function(p){
+      p.hidden = p.id !== tab.getAttribute("aria-controls");
+    });
+  }
+
+  tabs.forEach(function(tab, i){
+    tab.addEventListener("click", function(){ selectTab(tab); });
+    tab.addEventListener("keydown", function(e){
+      var idx = i;
+      if(e.key === "ArrowRight"){ idx = (i + 1) % tabs.length; }
+      else if(e.key === "ArrowLeft"){ idx = (i - 1 + tabs.length) % tabs.length; }
+      else if(e.key === "Home"){ idx = 0; }
+      else if(e.key === "End"){ idx = tabs.length - 1; }
+      else { return; }
+      e.preventDefault();
+      tabs[idx].focus();
+      selectTab(tabs[idx]);
+    });
+  });
+
+  /* ---------- localStorage autosave ---------- */
+  function storageKey(fieldKey){ return moduleSlug + "_" + fieldKey; }
+
+  var fields = Array.prototype.slice.call(document.querySelectorAll("[data-key]"));
+  fields.forEach(function(field){
+    var key = field.getAttribute("data-key");
+    var saved = window.localStorage.getItem(storageKey(key));
+    if(saved !== null){ field.value = saved; }
+
+    var statusEl = document.querySelector('[data-status-for="' + key + '"]');
+    var timer = null;
+
+    field.addEventListener("input", function(){
+      window.localStorage.setItem(storageKey(key), field.value);
+      if(statusEl){
+        statusEl.textContent = "Saved just now";
+        clearTimeout(timer);
+        timer = setTimeout(function(){ statusEl.textContent = ""; }, 1800);
+      }
+    });
+  });
+
+  /* ---------- Copy to clipboard ---------- */
+  var copyBtns = Array.prototype.slice.call(document.querySelectorAll(".btn-copy"));
+  copyBtns.forEach(function(btn){
+    var targetKey = btn.getAttribute("data-target");
+    var targetEl = document.querySelector('[data-key="' + targetKey + '"]');
+    var originalLabel = btn.textContent;
+
+    btn.addEventListener("click", function(){
+      var text = targetEl ? targetEl.value : "";
+      var done = function(){
+        btn.textContent = "Copied!";
+        btn.setAttribute("data-copied", "true");
+        setTimeout(function(){
+          btn.textContent = originalLabel;
+          btn.removeAttribute("data-copied");
+        }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, done);
+      } else {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } catch(e){}
+        document.body.removeChild(ta);
+        done();
+      }
+    });
+  });
+
+  /* ---------- NUDGES checklist (Tab 2) ---------- */
+  var nudgesChecklist = [
+    {rank:1, letter:"N", tier:"foundation", title:"iNcentives", sub:"who actually pays, who actually benefits",
+      analysis:"Every choice architecture embeds incentives, even when they're not explicit — who bears the cost of a decision, who benefits, and how visible those costs and benefits are. People respond to incentives, but often only when the incentives are salient; hidden or delayed costs get systematically underweighted.",
+      apply:"Before nudging, map out who actually pays and who actually benefits from each option, and make sure the relevant incentive is visible at the moment of choice, not buried in fine print."},
+    {rank:2, letter:"U", tier:"foundation", title:"Understand Mappings", sub:"connect an option to its real-world outcome",
+      analysis:"A “mapping” is the link between a choice and its actual real-world outcome for the chooser. Many choices are hard precisely because people can't easily map an option (a 401(k) fund name, a health insurance plan's jargon) onto what it will actually mean for their life.",
+      apply:"Translate options into terms people can directly map to outcomes — e.g., show projected retirement income instead of a fund's ticker symbol, or expected annual cost instead of a plan's technical name."},
+    {rank:3, letter:"D", tier:"diagnosis", title:"Defaults", sub:"the single most powerful lever in the checklist",
+      analysis:"Because of inertia, status quo bias, and the implicit sense that a default is an endorsed recommendation, whatever is set as the default becomes the outcome for most people — often the majority, even when opting out costs almost nothing.",
+      apply:"Set the default to whatever outcome most people would choose if they thought carefully — informed, unbiased, with their long-term interest in mind — while keeping opting out simple and low-cost."},
+    {rank:4, letter:"G", tier:"diagnosis", title:"Give Feedback", sub:"let people see how they're doing",
+      analysis:"People need to know how they're doing relative to a goal or a good decision, and good choice architecture builds that feedback into the environment rather than assuming people will seek it out on their own.",
+      apply:"Add clear, immediate, and specific feedback — a fuel gauge, a real-time energy-use display, an account balance alert — right at the point where it can still change behavior."},
+    {rank:5, letter:"E", tier:"testing", title:"Expect Error", sub:"design for graceful failure, not flawless execution",
+      analysis:"A well-designed system assumes people will make mistakes — mistype a number, forget a step, misread a form — and builds in ways to catch and correct those errors cheaply, rather than assuming flawless execution.",
+      apply:"Design for graceful failure: confirmation screens before irreversible actions, forgiving formats (accepting multiple date formats), and easy undo options."},
+    {rank:6, letter:"S", tier:"testing", title:"Structure Complex Choices", sub:"prevent choice overload",
+      analysis:"When a choice has too many options or too many dimensions (hundreds of mutual funds, dozens of insurance plans), people often fall back on poor heuristics or avoid choosing altogether — a phenomenon known as choice overload.",
+      apply:"Break a complex choice into smaller steps, offer a sensible default path, or use a filtering tool that ranks options based on the person's stated priorities."}
+  ];
+
+  var stageLabel = {foundation:"Visibility", diagnosis:"Structure", testing:"Resilience"};
+  var listEl = document.getElementById("toolkit-list");
+  var frag = document.createDocumentFragment();
+
+  nudgesChecklist.forEach(function(item){
+    var el = document.createElement("div");
+    el.className = "toolkit-item";
+    el.setAttribute("data-open", "false");
+
+    var bodyId = "nc-body-" + item.rank;
+
+    var toggle = document.createElement("button");
+    toggle.className = "toolkit-toggle";
+    toggle.type = "button";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-controls", bodyId);
+    toggle.innerHTML =
+      '<span class="toolkit-rank">' + item.letter + '</span>' +
+      '<span class="lt-title">' + item.title + ' <span style="font-weight:400;color:var(--muted);">— ' + item.sub + '</span>' +
+      '<span class="toolkit-stage stage-' + item.tier + '">' + stageLabel[item.tier] + '</span></span>' +
+      '<span class="lt-icon">▼</span>';
+
+    var body = document.createElement("div");
+    body.className = "toolkit-body";
+    body.id = bodyId;
+    body.hidden = true;
+    body.innerHTML =
+      '<p><span class="lb-label">Analysis</span>' + item.analysis + '</p>' +
+      '<p><span class="lb-label">How to Apply It</span>' + item.apply + '</p>';
+
+    toggle.addEventListener("click", function(){
+      var isOpen = el.getAttribute("data-open") === "true";
+      el.setAttribute("data-open", isOpen ? "false" : "true");
+      toggle.setAttribute("aria-expanded", isOpen ? "false" : "true");
+      body.hidden = isOpen;
+    });
+
+    el.appendChild(toggle);
+    el.appendChild(body);
+    frag.appendChild(el);
+  });
+
+  listEl.appendChild(frag);
+})();
+</script>
+</body>
+</html>
