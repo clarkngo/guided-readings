@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Culture Map — Guided Reading Companion</title>
+<style>
+  :root{
+    --text:#2c2013;
+    --bg:#faf5ea;
+    --accent:#a8461f;
+    --accent-dark:#832f11;
+    --accent-soft:#f3e0cf;
+    --border:#e6dbc4;
+    --card-bg:#fffcf5;
+    --muted:#7a6a54;
+    --success:#4d6b3f;
+    --success-soft:#e6ecdc;
+    --warn:#95591c;
+    --warn-soft:#f3e6c9;
+    --serif: Palatino, "Palatino Linotype", "Iowan Old Style", "Book Antiqua", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--serif);
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 80px;}
+  a{color:var(--accent);}
+
+  /* Header */
+  header.page-header{margin-bottom:36px;}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);
+    font-size:12.5px;font-weight:600;letter-spacing:.02em;
+    padding:5px 12px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent-dark);
+    border:1px solid #e3c8a8;
+  }
+  .badge.muted{background:#f2ede0;color:var(--muted);border-color:var(--border);}
+  .badge.success{background:var(--success-soft);color:#3d5732;border-color:#cfdcc0;}
+
+  h1{font-size:clamp(1.9rem,3.4vw,2.5rem);margin:0 0 4px;letter-spacing:-.01em;font-weight:600;font-style:italic;}
+  .subtitle{color:var(--muted);font-size:1.05rem;margin:0 0 14px;font-style:italic;}
+  .citation{
+    font-size:.88rem;color:var(--muted);font-family:var(--sans);
+    border-left:3px solid var(--accent-soft);padding-left:12px;margin-bottom:22px;
+  }
+  .overview p{margin:0 0 12px;font-size:.98rem;}
+  .overview{margin-bottom:18px;}
+
+  .privacy-note{
+    display:flex;gap:10px;align-items:flex-start;
+    background:var(--card-bg);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:8px;padding:12px 14px;font-size:.87rem;color:var(--muted);margin-bottom:8px;
+  }
+  .privacy-note strong{color:var(--text);}
+
+  /* Reading level toggle */
+  .level-picker{
+    display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:18px 0 22px;
+    font-family:var(--sans);
+  }
+  .level-picker .lp-label{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+  .level-group{display:inline-flex;background:var(--accent-soft);border:1px solid #e3c8a8;border-radius:999px;padding:3px;gap:2px;}
+  .level-btn{
+    appearance:none;border:none;background:transparent;cursor:pointer;
+    font-family:var(--sans);font-size:.82rem;font-weight:600;color:var(--accent-dark);
+    padding:6px 14px;border-radius:999px;transition:background .15s,color .15s;
+  }
+  .level-btn:hover{background:#eccbaa;}
+  .level-btn[aria-pressed="true"]{background:var(--accent);color:#fffaf0;}
+  .level-btn:focus-visible{outline:2px solid var(--accent-dark);outline-offset:2px;}
+
+  /* Learning outcomes */
+  .lo-section{margin:30px 0 38px;}
+  .lo-section h2{font-size:1.15rem;margin:0 0 4px;}
+  .lo-section .lo-sub{color:var(--muted);font-size:.88rem;margin:0 0 16px;}
+  .lo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;}
+  .lo-card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:10px;
+    padding:14px 16px;font-size:.88rem;
+  }
+  .lo-card .lo-tag{
+    display:inline-block;font-family:var(--sans);font-size:11px;font-weight:700;color:var(--accent-dark);
+    background:var(--accent-soft);border-radius:5px;padding:2px 7px;margin-bottom:8px;
+    letter-spacing:.04em;
+  }
+  .lo-card .lo-verb{font-weight:700;color:var(--text);}
+
+  /* Tabs */
+  .tabs{
+    display:flex;gap:4px;border-bottom:2px solid var(--border);
+    overflow-x:auto;margin-bottom:24px;-ms-overflow-style:none;scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab-btn{
+    appearance:none;border:none;background:transparent;cursor:pointer;
+    font-family:var(--sans);font-size:.88rem;font-weight:600;color:var(--muted);
+    padding:11px 16px;white-space:nowrap;border-bottom:2px solid transparent;
+    margin-bottom:-2px;transition:color .15s, border-color .15s;
+  }
+  .tab-btn:hover{color:var(--accent-dark);}
+  .tab-btn[aria-selected="true"]{color:var(--accent-dark);border-bottom-color:var(--accent);}
+  .tab-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;}
+  .tab-meta{display:block;font-weight:400;font-size:10.5px;color:var(--muted);margin-top:2px;letter-spacing:.02em;}
+
+  .panel{animation:fade .15s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
+  .panel h2{font-size:1.3rem;margin:0 0 6px;}
+  .panel .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 22px;}
+
+  /* Generic cards */
+  .card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:10px;
+    padding:18px 20px;margin-bottom:14px;
+  }
+  .card h3{margin:0 0 8px;font-size:1.02rem;}
+  .card p{margin:0 0 8px;font-size:.92rem;}
+  .card p:last-child{margin-bottom:0;}
+
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:24px;}
+
+  .theme-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .theme-list li{
+    display:flex;gap:12px;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;
+    padding:12px 14px;font-size:.9rem;
+  }
+  .theme-num{
+    flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;
+  }
+
+  .tension-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin-bottom:24px;}
+  .tension-col{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+  .tension-col h4{margin:0 0 8px;font-size:.95rem;}
+  .tension-col ul{margin:0;padding-left:18px;font-size:.87rem;}
+  .tension-col li{margin-bottom:5px;}
+  .tension-vs{
+    display:flex;align-items:center;justify-content:center;padding:0 14px;
+    font-weight:700;color:var(--muted);font-size:.8rem;
+  }
+  @media(max-width:680px){
+    .tension-grid{grid-template-columns:1fr;}
+    .tension-vs{padding:8px 0;}
+  }
+
+  /* Scales (process) list */
+  .toolkit-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px;}
+  .toolkit-item{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .toolkit-toggle{
+    width:100%;display:flex;align-items:center;gap:14px;text-align:left;
+    background:transparent;border:none;cursor:pointer;padding:14px 16px;font-family:var(--sans);
+  }
+  .toolkit-rank{
+    flex:0 0 auto;width:34px;height:34px;border-radius:8px;background:var(--accent-soft);color:var(--accent-dark);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;
+  }
+  .toolkit-toggle .lt-title{flex:1;font-weight:600;font-size:.94rem;color:var(--text);}
+  .toolkit-toggle .lt-icon{color:var(--muted);transition:transform .15s;font-size:.8rem;}
+  .toolkit-item[data-open="true"] .lt-icon{transform:rotate(180deg);}
+  .toolkit-body{padding:0 16px 16px 64px;font-size:.88rem;}
+  .toolkit-body p{margin:0 0 8px;}
+  .toolkit-body .lb-label{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-dark);display:block;margin-bottom:3px;}
+  .toolkit-stage{
+    font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:8px;white-space:nowrap;
+  }
+  .stage-foundation{background:#f2ede0;color:var(--muted);}
+  .stage-diagnosis{background:var(--warn-soft);color:var(--warn);}
+  .stage-testing{background:var(--success-soft);color:#3d5732;}
+
+  /* Close reading concept cards */
+  .concept-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;}
+  .concept-head{padding:14px 18px;border-bottom:1px solid var(--border);background:#f5efe1;}
+  .concept-head h3{margin:0;font-size:1rem;}
+  .concept-cols{display:grid;grid-template-columns:1fr 1fr;}
+  .concept-col{padding:16px 18px;font-size:.88rem;}
+  .concept-col:first-child{border-right:1px solid var(--border);}
+  .concept-col .col-label{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);display:block;margin-bottom:8px;}
+  @media(max-width:680px){
+    .concept-cols{grid-template-columns:1fr;}
+    .concept-col:first-child{border-right:none;border-bottom:1px solid var(--border);}
+  }
+
+  /* Reflection */
+  .reflection-item{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:16px;}
+  .reflection-item .rq-tag{font-family:var(--sans);font-size:11px;font-weight:700;color:var(--accent-dark);background:var(--accent-soft);padding:2px 8px;border-radius:5px;letter-spacing:.03em;}
+  .reflection-item p.prompt{margin:8px 0 12px;font-size:.94rem;font-weight:600;}
+  textarea{
+    width:100%;min-height:110px;resize:vertical;font-family:var(--sans);font-size:.9rem;
+    border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);
+    background:#f5efe1;
+  }
+  textarea:focus{outline:2px solid var(--accent);outline-offset:1px;background:var(--card-bg);}
+  .reflection-actions{display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px;}
+  .save-status{font-family:var(--sans);font-size:.76rem;color:var(--muted);}
+  .btn{
+    appearance:none;border:1px solid var(--border);background:var(--card-bg);color:var(--text);
+    font-family:var(--sans);font-size:.82rem;font-weight:600;padding:7px 13px;border-radius:7px;cursor:pointer;
+    transition:background .15s, border-color .15s;
+  }
+  .btn:hover{border-color:var(--accent);color:var(--accent-dark);}
+  .btn.btn-copy[data-copied="true"]{background:var(--success-soft);border-color:#cfdcc0;color:#3d5732;}
+
+  /* Glossary */
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;}
+  .term-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:13px 15px;}
+  .term-card dt{font-weight:700;font-size:.88rem;margin-bottom:4px;color:var(--text);}
+  .term-card dd{margin:0;font-size:.83rem;color:var(--muted);}
+  .glossary-group-title{font-family:var(--sans);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:26px 0 10px;}
+  .glossary-group-title:first-child{margin-top:0;}
+
+  footer.page-footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--border);font-size:.78rem;color:var(--muted);text-align:center;}
+</style>
+</head>
+<body data-module="culture-map-erin-meyer">
+<div class="wrap">
+
+  <header class="page-header">
+    <div class="badges">
+      <span class="badge">Cross-Cultural Communication · International Business</span>
+      <span class="badge muted" id="audience-badge">Undergraduate &amp; Graduate · International Business, Communication, Global Studies</span>
+      <span class="badge success">5 Learning Outcomes</span>
+    </div>
+    <h1>The Culture Map: Decoding How People Think, Lead, and Get Things Done Across Cultures</h1>
+    <p class="subtitle">A Guided Reading Companion</p>
+    <p class="citation">
+      Erin Meyer · PublicAffairs, 2014
+      (based on Meyer's research and teaching at INSEAD)
+    </p>
+
+    <div class="level-picker">
+      <span class="lp-label">Reading Level</span>
+      <div class="level-group" role="group" aria-label="Reading level">
+        <button type="button" class="level-btn" data-level="intro" aria-pressed="false">Intro / High School</button>
+        <button type="button" class="level-btn" data-level="undergrad" aria-pressed="true">Undergrad / Grad</button>
+        <button type="button" class="level-btn" data-level="exec" aria-pressed="false">Executive / Professional</button>
+      </div>
+    </div>
+
+    <div class="overview">
+      <p id="overview-p1"></p>
+      <p id="overview-p2"></p>
+    </div>
+
+    <div class="privacy-note">
+      <span>🔒</span>
+      <span><strong>Your answers stay on this device.</strong> Everything you type in Tab 4 is saved only
+      to your browser's local storage on this page — nothing is sent to a server, an instructor, or any
+      third party unless you explicitly copy and submit it yourself.</span>
+    </div>
+  </header>
+
+  <section class="lo-section">
+    <h2>Learning Outcomes</h2>
+    <p class="lo-sub">By the end of this module, you should be able to:</p>
+    <div class="lo-grid">
+      <div class="lo-card">
+        <span class="lo-tag">LO1</span>
+        <p id="lo1-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO2</span>
+        <p id="lo2-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO3</span>
+        <p id="lo3-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO4</span>
+        <p id="lo4-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO5</span>
+        <p id="lo5-text"></p>
+      </div>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="Module sections">
+    <button class="tab-btn" role="tab" id="tab-btn-1" aria-controls="tab-1" aria-selected="true" tabindex="0">
+      Core Framework<span class="tab-meta">Supports LO1 · LO3</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-2" aria-controls="tab-2" aria-selected="false" tabindex="-1">
+      Eight Scales<span class="tab-meta">Supports LO2 · LO5</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-3" aria-controls="tab-3" aria-selected="false" tabindex="-1">
+      Close Reading<span class="tab-meta">Supports LO3 · LO4</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-4" aria-controls="tab-4" aria-selected="false" tabindex="-1">
+      Reflection<span class="tab-meta">Supports LO2 · LO5</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-5" aria-controls="tab-5" aria-selected="false" tabindex="-1">
+      Glossary<span class="tab-meta">Supports all LOs</span>
+    </button>
+  </nav>
+
+  <!-- TAB 1 : CORE FRAMEWORK -->
+  <section class="panel" id="tab-1" role="tabpanel" aria-labelledby="tab-btn-1" tabindex="0">
+    <h2>Core Framework &amp; Mental Models</h2>
+    <p class="panel-sub">The vocabulary Meyer builds early in the book, and the central tension her framework argues from.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>Cultural Scale</h3>
+        <p>One of eight independent dimensions Meyer uses to map behavior across cultures — e.g.,
+        Communicating (low-context vs. high-context). Each scale runs between two poles; no position is
+        inherently better.</p>
+      </div>
+      <div class="card">
+        <h3>Relativity Principle</h3>
+        <p>A country's position on a scale only means something <strong>relative</strong> to another
+        country's position. Americans read as "direct" next to the Japanese but "indirect" next to the
+        Dutch — there is no fixed, absolute "direct" point on the scale.</p>
+      </div>
+      <div class="card">
+        <h3>Country Cultural Profile</h3>
+        <p>A country's approximate position across all eight scales, based on Meyer's research and
+        interviews — used to compare two cultures and anticipate where friction is likely.</p>
+      </div>
+      <div class="card">
+        <h3>Cultural Gap</h3>
+        <p>The distance between two cultures' positions on a given scale — the single best predictor of
+        where cross-cultural friction will occur, and the thing an adaptation strategy should target.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">The Central Tension: One Dial vs. Eight Independent Scales</h3>
+    <div class="tension-grid">
+      <div class="tension-col">
+        <h4>The Popular View: Culture as One Dial</h4>
+        <ul>
+          <li>Cultures are either "direct" or "indirect," full stop — one label covers the whole culture.</li>
+          <li>If two cultures are close on one trait, assume they're close on related traits too.</li>
+          <li>Cultural stereotypes are treated as fixed, absolute facts about a country.</li>
+          <li>Training focuses on general "sensitivity," not specific behavioral scales.</li>
+        </ul>
+      </div>
+      <div class="tension-vs">VS</div>
+      <div class="tension-col">
+        <h4>Meyer's View: Eight Scales, Positioned Relatively</h4>
+        <ul>
+          <li>Eight distinct scales — Communicating, Evaluating, Persuading, Leading, Deciding, Trusting, Disagreeing, Scheduling — each independent of the others.</li>
+          <li>A culture's position on one scale does not predict its position on another.</li>
+          <li>Every position is relative to the culture doing the comparing — there is no universal zero point.</li>
+          <li>Effective adaptation targets the specific scale and specific gap causing friction.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">Five Guiding Themes to Track While You Read</h3>
+    <ul class="theme-list">
+      <li><span class="theme-num">1</span><span><strong>Culture is multi-dimensional, not one dial.</strong> Two cultures can be nearly identical on one scale and far apart on another.</span></li>
+      <li><span class="theme-num">2</span><span><strong>Nothing on the map is absolute.</strong> Always ask "relative to whom?" before labeling a culture "direct" or "hierarchical."</span></li>
+      <li><span class="theme-num">3</span><span><strong>The gap predicts the friction.</strong> It's not your counterpart's position that matters, but the distance between their position and yours.</span></li>
+      <li><span class="theme-num">4</span><span><strong>Scales don't correlate the way intuition suggests.</strong> Hierarchy in leadership style is a different scale from how decisions actually get made.</span></li>
+      <li><span class="theme-num">5</span><span><strong>Adaptation beats judgment.</strong> The goal isn't ranking cultures as better or worse, but adjusting your own behavior once you've located the gap.</span></li>
+    </ul>
+  </section>
+
+  <!-- TAB 2 : EIGHT SCALES -->
+  <section class="panel" id="tab-2" role="tabpanel" aria-labelledby="tab-btn-2" tabindex="0" hidden>
+    <h2>The Eight Scales</h2>
+    <p class="panel-sub">Meyer's full framework, in the order the book presents it — click each to expand the analysis and how to apply it.</p>
+
+    <div class="toolkit-list" id="toolkit-list"></div>
+  </section>
+
+  <!-- TAB 3 : CLOSE READING -->
+  <section class="panel" id="tab-3" role="tabpanel" aria-labelledby="tab-btn-3" tabindex="0" hidden>
+    <h2>Close Reading &amp; Technical Deep Dive</h2>
+    <p class="panel-sub">A slower, side-by-side pass on the mechanics that make the rest of the framework work.</p>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>1. The Relativity Principle in Practice</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <p>Americans are often coached to be "direct" communicators — but that label only holds relative
+          to the Japanese or the Chinese. Put an American in a room with the Dutch, Israelis, or Russians,
+          and the American now reads as comparatively vague and diplomatic. There is no fixed point on the
+          Communicating scale labeled "American" — only a position relative to whoever else is in the
+          room.</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>This is why Meyer insists on mapping two specific cultures against each other rather than
+          consulting a single culture's "score." The practical technique: plot your own culture's position
+          and your counterpart's position on the same scale, then design your adaptation around the
+          <em>gap</em> between them — not around either position in isolation. The same manager needs a
+          different adaptation strategy for a Japanese counterpart than for a Dutch one, even though both
+          interactions involve "communication style."</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>2. Why Scales Don't Correlate — Leading vs. Deciding</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <p>It's tempting to assume a hierarchical culture also makes decisions top-down, and an
+          egalitarian culture makes decisions by consensus. Japan disproves this: extremely hierarchical in
+          Leading (deep deference to rank, formal titles, seniority), yet highly consensual in Deciding —
+          the <em>nemawashi</em> process quietly builds agreement among stakeholders before a decision is
+          ever formally proposed, so the approval meeting is close to a formality.</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>Meyer's data shows these two scales are close to independent across her country sample —
+          knowing a culture's Leading position gives you almost no predictive power over its Deciding
+          position. The mechanism: Leading measures the social distance between ranks; Deciding measures
+          where decision authority and agreement-building actually sit in the process. A culture can
+          maintain steep status distance while still requiring broad buy-in before acting, or maintain flat
+          status while concentrating decision authority in one person.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>3. Task-Based vs. Relationship-Based Trust</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <p>In task-based (cognitive) trust cultures, colleagues extend trust quickly based on competence
+          and reliable delivery — you're trustworthy if you do good work. In relationship-based (affective)
+          trust cultures, trust is built through personal connection: shared meals, personal disclosure,
+          time spent outside of work — you're trustworthy if the relationship feels genuine, regardless of
+          your resume.</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>This scale explains a common cross-cultural friction: a task-based negotiator arrives ready to
+          get straight to business and reads relationship-building small talk as a waste of time; a
+          relationship-based counterpart reads the rush to business as a sign the other party doesn't
+          actually want a real relationship, and may withhold real trust — and real deal terms — until
+          that's established. Meyer's practical fix is time allocation, not persuasion: task-based operators
+          need to deliberately budget unstructured relationship time up front, since no amount of competence
+          substitutes for it in a relationship-based culture.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4 : REFLECTION -->
+  <section class="panel" id="tab-4" role="tabpanel" aria-labelledby="tab-btn-4" tabindex="0" hidden>
+    <h2>Reflection &amp; Synthesis Exercises</h2>
+    <p class="panel-sub">Map real cross-cultural interactions onto the framework. Your answers autosave to this browser as you type.</p>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 1 · Supports LO1 · LO2</span>
+      <p class="prompt" id="prompt1"></p>
+      <textarea data-key="reflect1" aria-label="Reflection 1 response" placeholder="e.g., A German colleague's feedback on my draft felt harsh and blunt — that's probably the Evaluating scale, and the gap was..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect1">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect1"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 2 · Supports LO3</span>
+      <p class="prompt" id="prompt2"></p>
+      <textarea data-key="reflect2" aria-label="Reflection 2 response" placeholder="e.g., I'd call the British 'indirect' — but relative to the Japanese, the British would look quite direct..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect2">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect2"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 3 · Supports LO4</span>
+      <p class="prompt" id="prompt3"></p>
+      <textarea data-key="reflect3" aria-label="Reflection 3 response" placeholder="e.g., Leading and Deciding seem like they should correlate, but Japan shows hierarchical leading with consensual deciding because..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect3">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect3"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 4 · Supports LO5</span>
+      <p class="prompt" id="prompt4"></p>
+      <textarea data-key="reflect4" aria-label="Reflection 4 response" placeholder="e.g., Working with a relationship-based-trust culture, I'll budget an unstructured meal before any business agenda..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect4">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect4"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 5 : GLOSSARY -->
+  <section class="panel" id="tab-5" role="tabpanel" aria-labelledby="tab-btn-5" tabindex="0" hidden>
+    <h2>Reference &amp; Glossary</h2>
+    <p class="panel-sub">Core terms and the book's eight named scales.</p>
+
+    <div class="glossary-group-title">Core Vocabulary</div>
+    <div class="glossary-grid">
+      <div class="term-card"><dt>Cultural Scale</dt><dd>One of eight independent dimensions Meyer uses to map behavior across cultures; each runs between two poles with no inherently "better" position.</dd></div>
+      <div class="term-card"><dt>Relativity Principle</dt><dd>A culture's position on a scale only has meaning relative to another culture's position — there's no fixed, absolute point on the scale.</dd></div>
+      <div class="term-card"><dt>Cultural Gap</dt><dd>The distance between two cultures' positions on a given scale — the best predictor of where cross-cultural friction will occur.</dd></div>
+      <div class="term-card"><dt>Country Cultural Profile</dt><dd>A country's approximate position across all eight scales, based on Meyer's research, used to anticipate friction with another culture.</dd></div>
+      <div class="term-card"><dt>Low-Context / High-Context</dt><dd>Whether communication should be explicit and simple (low-context) or layered and dependent on shared background (high-context).</dd></div>
+      <div class="term-card"><dt>Cognitive Trust / Affective Trust</dt><dd>Trust built through reliable task performance (cognitive/task-based) versus trust built through personal relationship (affective/relationship-based).</dd></div>
+    </div>
+
+    <div class="glossary-group-title">The Eight Scales</div>
+    <div class="glossary-grid">
+      <div class="term-card"><dt>Communicating</dt><dd>Low-Context ↔ High-Context — how explicit versus layered and implicit messages need to be.</dd></div>
+      <div class="term-card"><dt>Evaluating</dt><dd>Direct ↔ Indirect Negative Feedback — how bluntly criticism is delivered.</dd></div>
+      <div class="term-card"><dt>Persuading</dt><dd>Principles-First ↔ Applications-First — whether reasoning or the conclusion comes first.</dd></div>
+      <div class="term-card"><dt>Leading</dt><dd>Egalitarian ↔ Hierarchical — how much distance is expected between boss and subordinate.</dd></div>
+      <div class="term-card"><dt>Deciding</dt><dd>Consensual ↔ Top-Down — how much agreement-building happens before a decision is final.</dd></div>
+      <div class="term-card"><dt>Trusting</dt><dd>Task-Based ↔ Relationship-Based — whether trust comes from reliable work or personal connection.</dd></div>
+      <div class="term-card"><dt>Disagreeing</dt><dd>Confrontational ↔ Avoids Confrontation — whether open disagreement is normal or damaging to harmony.</dd></div>
+      <div class="term-card"><dt>Scheduling</dt><dd>Linear-Time ↔ Flexible-Time — whether schedules are fixed and sequential or fluid and adaptable.</dd></div>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    Guided Reading Companion · <em>The Culture Map</em>, Erin Meyer (PublicAffairs, 2014) · Answers stored locally in your browser only.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var moduleSlug = document.body.getAttribute("data-module");
+
+  /* ---------- Reading level content ---------- */
+  var levelContent = {
+    intro: {
+      audienceBadge: "Intro / High School · Cross-Cultural Communication Basics",
+      overviewP1: "<em>The Culture Map</em> teaches you that people from different countries don't just have different customs — they often have genuinely different defaults for how they communicate, give feedback, make decisions, and manage time. Erin Meyer's big idea is that you can't just label a whole country as \"direct\" or \"polite\" — it only makes sense compared to some other country, and there are eight separate categories (not just one) where cultures can differ.",
+      overviewP2: "This page is a study guide to use next to the book. Tab 1 introduces the big idea. Tab 2 walks through all eight ways cultures can differ, one at a time. Tab 3 looks closer at two tricky ideas. Tab 4 has you apply it to real situations, and Tab 5 is a glossary you can check any time.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the eight ways Meyer says cultures can differ — like how directly people communicate or how they use time.",
+      lo2: "<span class=\"lo-verb\">Trace</span> a confusing or awkward experience with someone from another culture back to one of the eight scales.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> between calling a culture \"direct\" as an absolute fact and understanding it's only \"direct\" compared to some other specific culture.",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> why two things that seem related — like respecting authority and making decisions as a group — can actually be totally separate in a culture.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> one specific way you'd change your own communication when working with people from a very different culture.",
+      prompt1: "Think of a time you talked to or worked with someone from a different culture or background and something felt off or confusing. Looking at the eight scales, which one do you think explains what happened?",
+      prompt2: "Think of a country or group you'd call \"blunt\" or \"polite.\" Can you think of another country that would make that same group look like the opposite? Why does that happen?",
+      prompt3: "Why might a country be very formal and respectful toward authority (like Japan) but still make decisions as a group instead of just following the boss's order? What does that tell you about culture having more than one \"setting\"?",
+      prompt4: "If you were going to study, work, or travel somewhere very culturally different from home, pick one of the eight scales and write down one specific thing you'd change about how you communicate or act."
+    },
+    undergrad: {
+      audienceBadge: "Undergraduate &amp; Graduate · International Business, Communication, Global Studies",
+      overviewP1: "<em>The Culture Map</em> is Erin Meyer's framework for decoding why communication, leadership, and decision-making that work smoothly within one culture create friction across borders. Drawing on years of research and interviews at INSEAD, Meyer argues that most cross-cultural training fails because it treats culture as a single dial — \"direct vs. indirect,\" \"formal vs. informal\" — when in fact eight independent scales are in play at once, and a country's position on each scale is only meaningful relative to another country's position, never in absolute terms.",
+      overviewP2: "This module works alongside the book, not in place of it. Tab 1 introduces the vocabulary and the relativity principle the whole framework depends on. Tab 2 walks all eight scales as an interactive set you can click through. Tab 3 does a closer read of why the scales don't correlate and how relativity plays out in practice. Tab 4 asks you to map a real cross-cultural interaction onto the scales, and Tab 5 is a standing glossary. Work through the tabs in order the first time.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> Meyer's eight cultural scales — Communicating, Evaluating, Persuading, Leading, Deciding, Trusting, Disagreeing, and Scheduling — and what each one measures.",
+      lo2: "<span class=\"lo-verb\">Trace</span> a specific cross-cultural miscommunication back to a gap on one or more of the eight scales.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> between absolute cultural stereotypes and Meyer's relative positioning, where the same culture can read as \"direct\" or \"indirect\" depending on who it's being compared to.",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> why a culture's position on one scale (e.g., hierarchical Leading) doesn't predict its position on another (e.g., top-down Deciding), using real country examples.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> a communication-adaptation strategy for working with a specific culture, based on the gap between your own cultural position and theirs.",
+      prompt1: "Think of a specific cross-cultural interaction you've had (work, school, travel, family) that felt awkward or confusing. Which of the eight scales was the friction most likely on, and what was the gap?",
+      prompt2: "Pick a culture you'd describe as \"direct\" or \"indirect.\" Now name a specific other culture relative to which that label would flip. What does this tell you about labeling a culture in absolute terms?",
+      prompt3: "Pick two of the eight scales that seem like they should correlate (e.g., Leading and Deciding, or Communicating and Disagreeing). Find or recall a real country example where they don't — like Japan's hierarchical Leading but consensual Deciding.",
+      prompt4: "Pick a specific culture you might work with in the future. Choose the scale most likely to cause friction between your own cultural default and theirs, and write a concrete adaptation strategy for that gap."
+    },
+    exec: {
+      audienceBadge: "Executive / Professional · Global Teams, Negotiation &amp; Leadership",
+      overviewP1: "<em>The Culture Map</em> is Erin Meyer's operating framework, developed at INSEAD, for diagnosing why cross-border teams, negotiations, and leadership styles that work smoothly at home create friction abroad. Her central finding: generic \"cultural sensitivity\" training fails because it treats culture as one dial, when in practice eight independent scales are in play — and a team's or country's position on any one of them only means something relative to whoever they're working with, not in absolute terms.",
+      overviewP2: "Use this page as a working reference alongside the book. Tab 1 gives you the vocabulary and the relativity principle that drives the whole framework. Tab 2 is the highest-value tab for practitioners: all eight scales, with a concrete adaptation move for each. Tab 3 backs that up with the mechanics of why scales don't correlate; Tab 4 is where you map an actual cross-border relationship you're managing.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the eight scales — Communicating, Evaluating, Persuading, Leading, Deciding, Trusting, Disagreeing, Scheduling — well enough to brief a team before a cross-border engagement.",
+      lo2: "<span class=\"lo-verb\">Trace</span> a specific instance of cross-border team friction, negotiation stall, or feedback that landed badly back to a gap on one or more scales.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> absolute cultural labels (\"they're very hierarchical\") from Meyer's relative positioning when advising colleagues on a specific country pairing.",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> where your organization's assumptions about a partner culture wrongly infer one scale's position from another (e.g., assuming hierarchical leadership implies top-down decisions).",
+      lo5: "<span class=\"lo-verb\">Formulate</span> a concrete adaptation strategy — not a general sensitivity statement — for the highest-friction scale gap in a cross-border relationship you manage.",
+      prompt1: "Identify a recent cross-border interaction on your team (a meeting, a negotiation, a piece of feedback that landed badly) that produced friction. Which scale(s) best explain the gap, and how large was it?",
+      prompt2: "Pick a culture your organization frequently works with, and the label your team commonly uses for it (e.g., \"they're very indirect\"). Identify the specific counterpart culture that label is implicitly relative to, and how the label would change against a different counterpart.",
+      prompt3: "Identify two scales your organization tends to conflate when briefing staff on a specific country or region. Using the book's country data (or your own experience), explain where that assumption breaks down.",
+      prompt4: "For an upcoming or ongoing cross-border working relationship, identify the single highest-friction scale gap, and draft a specific, concrete adaptation you or your team should make — not a general \"be more sensitive\" statement."
+    }
+  };
+
+  var levelStorageKey = moduleSlug + "_readingLevel";
+  var levelBtns = Array.prototype.slice.call(document.querySelectorAll(".level-btn"));
+
+  function applyLevel(level){
+    var c = levelContent[level] || levelContent.undergrad;
+    var setHTML = function(id, html){ var el = document.getElementById(id); if(el){ el.innerHTML = html; } };
+
+    setHTML("audience-badge", c.audienceBadge);
+    setHTML("overview-p1", c.overviewP1);
+    setHTML("overview-p2", c.overviewP2);
+    setHTML("lo1-text", c.lo1);
+    setHTML("lo2-text", c.lo2);
+    setHTML("lo3-text", c.lo3);
+    setHTML("lo4-text", c.lo4);
+    setHTML("lo5-text", c.lo5);
+    setHTML("prompt1", c.prompt1);
+    setHTML("prompt2", c.prompt2);
+    setHTML("prompt3", c.prompt3);
+    setHTML("prompt4", c.prompt4);
+
+    levelBtns.forEach(function(btn){
+      btn.setAttribute("aria-pressed", btn.getAttribute("data-level") === level ? "true" : "false");
+    });
+  }
+
+  levelBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var level = btn.getAttribute("data-level");
+      applyLevel(level);
+      window.localStorage.setItem(levelStorageKey, level);
+    });
+  });
+
+  var savedLevel = window.localStorage.getItem(levelStorageKey) || "undergrad";
+  applyLevel(savedLevel);
+
+  /* ---------- Tabs ---------- */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  var panels = Array.prototype.slice.call(document.querySelectorAll('[role="tabpanel"]'));
+
+  function selectTab(tab){
+    tabs.forEach(function(t){
+      var selected = t === tab;
+      t.setAttribute("aria-selected", selected ? "true" : "false");
+      t.tabIndex = selected ? 0 : -1;
+    });
+    panels.forEach(function(p){
+      p.hidden = p.id !== tab.getAttribute("aria-controls");
+    });
+  }
+
+  tabs.forEach(function(tab, i){
+    tab.addEventListener("click", function(){ selectTab(tab); });
+    tab.addEventListener("keydown", function(e){
+      var idx = i;
+      if(e.key === "ArrowRight"){ idx = (i + 1) % tabs.length; }
+      else if(e.key === "ArrowLeft"){ idx = (i - 1 + tabs.length) % tabs.length; }
+      else if(e.key === "Home"){ idx = 0; }
+      else if(e.key === "End"){ idx = tabs.length - 1; }
+      else { return; }
+      e.preventDefault();
+      tabs[idx].focus();
+      selectTab(tabs[idx]);
+    });
+  });
+
+  /* ---------- localStorage autosave ---------- */
+  function storageKey(fieldKey){ return moduleSlug + "_" + fieldKey; }
+
+  var fields = Array.prototype.slice.call(document.querySelectorAll("[data-key]"));
+  fields.forEach(function(field){
+    var key = field.getAttribute("data-key");
+    var saved = window.localStorage.getItem(storageKey(key));
+    if(saved !== null){ field.value = saved; }
+
+    var statusEl = document.querySelector('[data-status-for="' + key + '"]');
+    var timer = null;
+
+    field.addEventListener("input", function(){
+      window.localStorage.setItem(storageKey(key), field.value);
+      if(statusEl){
+        statusEl.textContent = "Saved just now";
+        clearTimeout(timer);
+        timer = setTimeout(function(){ statusEl.textContent = ""; }, 1800);
+      }
+    });
+  });
+
+  /* ---------- Copy to clipboard ---------- */
+  var copyBtns = Array.prototype.slice.call(document.querySelectorAll(".btn-copy"));
+  copyBtns.forEach(function(btn){
+    var targetKey = btn.getAttribute("data-target");
+    var targetEl = document.querySelector('[data-key="' + targetKey + '"]');
+    var originalLabel = btn.textContent;
+
+    btn.addEventListener("click", function(){
+      var text = targetEl ? targetEl.value : "";
+      var done = function(){
+        btn.textContent = "Copied!";
+        btn.setAttribute("data-copied", "true");
+        setTimeout(function(){
+          btn.textContent = originalLabel;
+          btn.removeAttribute("data-copied");
+        }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, done);
+      } else {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } catch(e){}
+        document.body.removeChild(ta);
+        done();
+      }
+    });
+  });
+
+  /* ---------- Eight scales (Tab 2) ---------- */
+  var scales = [
+    {rank:1, tier:"foundation", title:"Communicating", sub:"Low-Context ↔ High-Context",
+      analysis:"Low-context cultures (Germany, the U.S., the Netherlands) value explicit, simple, clear communication that doesn't rely on shared background; high-context cultures (Japan, China, France relative to the U.S.) communicate with layered, nuanced, often implicit messages that assume shared context.",
+      apply:"When working across this gap, low-context communicators should slow down and add context rather than assuming bluntness is universally clear; high-context communicators should over-specify in writing rather than assuming subtext will land."},
+    {rank:2, tier:"foundation", title:"Evaluating", sub:"Direct ↔ Indirect Negative Feedback",
+      analysis:"Some cultures (the Netherlands, Israel, Russia) give critical feedback bluntly and expect it; others (Japan, Thailand, the U.K. relative to the Dutch) soften criticism heavily or deliver it privately and indirectly. This scale is often confused with Communicating but is analytically separate — France, for instance, is high-context but gives quite direct negative feedback.",
+      apply:"Calibrate feedback delivery to the receiving culture's position, not your own comfort — and don't assume a culture's Evaluating position matches its Communicating position."},
+    {rank:3, tier:"diagnosis", title:"Persuading", sub:"Principles-First ↔ Applications-First",
+      analysis:"Principles-first (deductive) cultures, often France or Germany, want the theory or reasoning laid out before the conclusion; applications-first (inductive) cultures, often the U.S. or U.K., want the recommendation up front, with reasoning available if asked.",
+      apply:"When presenting to a principles-first audience, build the argument before the ask; for an applications-first audience, lead with the conclusion and be ready to defend it."},
+    {rank:4, tier:"diagnosis", title:"Leading", sub:"Egalitarian ↔ Hierarchical",
+      analysis:"Egalitarian cultures (Denmark, the Netherlands) minimize the distance between boss and subordinate; hierarchical cultures (Japan, Nigeria, South Korea) expect status to be visibly respected and decisions to flow through rank.",
+      apply:"In hierarchical cultures, route requests through the appropriate level and avoid publicly challenging a superior; in egalitarian cultures, expect and invite direct pushback regardless of title."},
+    {rank:5, tier:"diagnosis", title:"Deciding", sub:"Consensual ↔ Top-Down",
+      analysis:"This is a distinct scale from Leading — Japan is hierarchical in Leading but highly consensual in Deciding (the nemawashi process builds agreement before a formal decision); the U.S. is fairly egalitarian in Leading but often top-down in Deciding.",
+      apply:"Don't infer a culture's decision-making style from its leadership style — confirm separately how much consensus-building is expected before decisions are considered final."},
+    {rank:6, tier:"testing", title:"Trusting", sub:"Task-Based ↔ Relationship-Based",
+      analysis:"Task-based (cognitive) trust cultures (the U.S., Germany, Scandinavia) extend trust based on reliable work and results; relationship-based (affective) trust cultures (China, India, much of Latin America and the Middle East) extend trust based on personal connection built over shared meals, time, and personal disclosure.",
+      apply:"In relationship-based cultures, invest in informal, unstructured time before pushing for business outcomes; rushing straight to task-focus can read as untrustworthy."},
+    {rank:7, tier:"testing", title:"Disagreeing", sub:"Confrontational ↔ Avoids Confrontation",
+      analysis:"Confrontational cultures (France, Germany, Israel, Russia) see open disagreement as normal and even healthy, separate from personal relationships; conflict-avoidant cultures (Japan, Indonesia, Thailand) see open disagreement as damaging to group harmony and prefer indirect signals.",
+      apply:"In confrontational cultures, vigorous debate isn't a threat to the relationship; in conflict-avoidant cultures, disagreement needs to be voiced privately, softened, or routed through a third party."},
+    {rank:8, tier:"testing", title:"Scheduling", sub:"Linear-Time ↔ Flexible-Time",
+      analysis:"Linear-time cultures (Germany, Switzerland, Japan) treat schedules, deadlines, and single-tasking as fixed and sequential; flexible-time cultures (India, much of the Middle East and Africa, Latin America) treat time as fluid, plans as adaptable, and multitasking or interruptions as normal.",
+      apply:"Set explicit expectations about deadline flexibility up front rather than assuming your own culture's default is universal — and don't read a flexible-time culture's rescheduling as disrespect."}
+  ];
+
+  var stageLabel = {foundation:"Communication", diagnosis:"Leadership &amp; Decisions", testing:"Trust, Conflict &amp; Time"};
+  var listEl = document.getElementById("toolkit-list");
+  var frag = document.createDocumentFragment();
+
+  scales.forEach(function(scale){
+    var item = document.createElement("div");
+    item.className = "toolkit-item";
+    item.setAttribute("data-open", "false");
+
+    var bodyId = "sc-body-" + scale.rank;
+
+    var toggle = document.createElement("button");
+    toggle.className = "toolkit-toggle";
+    toggle.type = "button";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-controls", bodyId);
+    toggle.innerHTML =
+      '<span class="toolkit-rank">#' + scale.rank + '</span>' +
+      '<span class="lt-title">' + scale.title + ' <span style="font-weight:400;color:var(--muted);">— ' + scale.sub + '</span>' +
+      '<span class="toolkit-stage stage-' + scale.tier + '">' + stageLabel[scale.tier] + '</span></span>' +
+      '<span class="lt-icon">▼</span>';
+
+    var body = document.createElement("div");
+    body.className = "toolkit-body";
+    body.id = bodyId;
+    body.hidden = true;
+    body.innerHTML =
+      '<p><span class="lb-label">Analysis</span>' + scale.analysis + '</p>' +
+      '<p><span class="lb-label">How to Apply It</span>' + scale.apply + '</p>';
+
+    toggle.addEventListener("click", function(){
+      var isOpen = item.getAttribute("data-open") === "true";
+      item.setAttribute("data-open", isOpen ? "false" : "true");
+      toggle.setAttribute("aria-expanded", isOpen ? "false" : "true");
+      body.hidden = isOpen;
+    });
+
+    item.appendChild(toggle);
+    item.appendChild(body);
+    frag.appendChild(item);
+  });
+
+  listEl.appendChild(frag);
+})();
+</script>
+</body>
+</html>
