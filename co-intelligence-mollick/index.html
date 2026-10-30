@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Co-Intelligence — Guided Reading Companion</title>
+<style>
+  :root{
+    --text:#2c2013;
+    --bg:#faf5ea;
+    --accent:#a8461f;
+    --accent-dark:#832f11;
+    --accent-soft:#f3e0cf;
+    --border:#e6dbc4;
+    --card-bg:#fffcf5;
+    --muted:#7a6a54;
+    --success:#4d6b3f;
+    --success-soft:#e6ecdc;
+    --warn:#95591c;
+    --warn-soft:#f3e6c9;
+    --serif: Palatino, "Palatino Linotype", "Iowan Old Style", "Book Antiqua", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--serif);
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 80px;}
+  a{color:var(--accent);}
+
+  /* Header */
+  header.page-header{margin-bottom:36px;}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);
+    font-size:12.5px;font-weight:600;letter-spacing:.02em;
+    padding:5px 12px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent-dark);
+    border:1px solid #e3c8a8;
+  }
+  .badge.muted{background:#f2ede0;color:var(--muted);border-color:var(--border);}
+  .badge.success{background:var(--success-soft);color:#3d5732;border-color:#cfdcc0;}
+
+  h1{font-size:clamp(1.9rem,3.4vw,2.5rem);margin:0 0 4px;letter-spacing:-.01em;font-weight:600;font-style:italic;}
+  .subtitle{color:var(--muted);font-size:1.05rem;margin:0 0 14px;font-style:italic;}
+  .citation{
+    font-size:.88rem;color:var(--muted);font-family:var(--sans);
+    border-left:3px solid var(--accent-soft);padding-left:12px;margin-bottom:22px;
+  }
+  .overview p{margin:0 0 12px;font-size:.98rem;}
+  .overview{margin-bottom:18px;}
+
+  .privacy-note{
+    display:flex;gap:10px;align-items:flex-start;
+    background:var(--card-bg);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:8px;padding:12px 14px;font-size:.87rem;color:var(--muted);margin-bottom:8px;
+  }
+  .privacy-note strong{color:var(--text);}
+
+  /* Reading level toggle */
+  .level-picker{
+    display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:18px 0 22px;
+    font-family:var(--sans);
+  }
+  .level-picker .lp-label{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+  .level-group{display:inline-flex;background:var(--accent-soft);border:1px solid #e3c8a8;border-radius:999px;padding:3px;gap:2px;}
+  .level-btn{
+    appearance:none;border:none;background:transparent;cursor:pointer;
+    font-family:var(--sans);font-size:.82rem;font-weight:600;color:var(--accent-dark);
+    padding:6px 14px;border-radius:999px;transition:background .15s,color .15s;
+  }
+  .level-btn:hover{background:#eccbaa;}
+  .level-btn[aria-pressed="true"]{background:var(--accent);color:#fffaf0;}
+  .level-btn:focus-visible{outline:2px solid var(--accent-dark);outline-offset:2px;}
+  .level-caption{font-family:var(--sans);font-size:.8rem;color:var(--muted);margin:-10px 0 18px;}
+
+  /* Learning outcomes */
+  .lo-section{margin:30px 0 38px;}
+  .lo-section h2{font-size:1.15rem;margin:0 0 4px;}
+  .lo-section .lo-sub{color:var(--muted);font-size:.88rem;margin:0 0 16px;}
+  .lo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;}
+  .lo-card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:10px;
+    padding:14px 16px;font-size:.88rem;
+  }
+  .lo-card .lo-tag{
+    display:inline-block;font-family:var(--sans);font-size:11px;font-weight:700;color:var(--accent-dark);
+    background:var(--accent-soft);border-radius:5px;padding:2px 7px;margin-bottom:8px;
+    letter-spacing:.04em;
+  }
+  .lo-card .lo-verb{font-weight:700;color:var(--text);}
+
+  /* Tabs */
+  .tabs{
+    display:flex;gap:4px;border-bottom:2px solid var(--border);
+    overflow-x:auto;margin-bottom:24px;-ms-overflow-style:none;scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab-btn{
+    appearance:none;border:none;background:transparent;cursor:pointer;
+    font-family:var(--sans);font-size:.88rem;font-weight:600;color:var(--muted);
+    padding:11px 16px;white-space:nowrap;border-bottom:2px solid transparent;
+    margin-bottom:-2px;transition:color .15s, border-color .15s;
+  }
+  .tab-btn:hover{color:var(--accent-dark);}
+  .tab-btn[aria-selected="true"]{color:var(--accent-dark);border-bottom-color:var(--accent);}
+  .tab-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;}
+  .tab-meta{display:block;font-weight:400;font-size:10.5px;color:var(--muted);margin-top:2px;letter-spacing:.02em;}
+
+  .panel{animation:fade .15s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
+  .panel h2{font-size:1.3rem;margin:0 0 6px;}
+  .panel .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 22px;}
+
+  /* Generic cards */
+  .card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:10px;
+    padding:18px 20px;margin-bottom:14px;
+  }
+  .card h3{margin:0 0 8px;font-size:1.02rem;}
+  .card p{margin:0 0 8px;font-size:.92rem;}
+  .card p:last-child{margin-bottom:0;}
+
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:24px;}
+
+  .theme-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .theme-list li{
+    display:flex;gap:12px;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;
+    padding:12px 14px;font-size:.9rem;
+  }
+  .theme-num{
+    flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;
+  }
+
+  .tension-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin-bottom:24px;}
+  .tension-col{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+  .tension-col h4{margin:0 0 8px;font-size:.95rem;}
+  .tension-col ul{margin:0;padding-left:18px;font-size:.87rem;}
+  .tension-col li{margin-bottom:5px;}
+  .tension-vs{
+    display:flex;align-items:center;justify-content:center;padding:0 14px;
+    font-weight:700;color:var(--muted);font-size:.8rem;
+  }
+  @media(max-width:680px){
+    .tension-grid{grid-template-columns:1fr;}
+    .tension-vs{padding:8px 0;}
+  }
+
+  /* Expandable lists (rules / futures) */
+  .toolkit-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px;}
+  .toolkit-item{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .toolkit-toggle{
+    width:100%;display:flex;align-items:center;gap:14px;text-align:left;
+    background:transparent;border:none;cursor:pointer;padding:14px 16px;font-family:var(--sans);
+  }
+  .toolkit-rank{
+    flex:0 0 auto;width:34px;height:34px;border-radius:8px;background:var(--accent-soft);color:var(--accent-dark);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;
+  }
+  .toolkit-toggle .lt-title{flex:1;font-weight:600;font-size:.94rem;color:var(--text);}
+  .toolkit-toggle .lt-icon{color:var(--muted);transition:transform .15s;font-size:.8rem;}
+  .toolkit-item[data-open="true"] .lt-icon{transform:rotate(180deg);}
+  .toolkit-body{padding:0 16px 16px 64px;font-size:.88rem;}
+  .toolkit-body p{margin:0 0 8px;}
+  .toolkit-body .lb-label{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-dark);display:block;margin-bottom:3px;}
+  .toolkit-stage{
+    font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:8px;white-space:nowrap;
+  }
+  .stage-foundation{background:#f2ede0;color:var(--muted);}
+  .stage-diagnosis{background:var(--warn-soft);color:var(--warn);}
+  .stage-testing{background:var(--success-soft);color:#3d5732;}
+  .list-heading{font-size:1.05rem;margin:28px 0 12px;}
+  .list-heading:first-of-type{margin-top:0;}
+
+  /* Close reading concept cards */
+  .concept-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;}
+  .concept-head{padding:14px 18px;border-bottom:1px solid var(--border);background:#f5efe1;}
+  .concept-head h3{margin:0;font-size:1rem;}
+  .concept-cols{display:grid;grid-template-columns:1fr 1fr;}
+  .concept-col{padding:16px 18px;font-size:.88rem;}
+  .concept-col:first-child{border-right:1px solid var(--border);}
+  .concept-col .col-label{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);display:block;margin-bottom:8px;}
+  @media(max-width:680px){
+    .concept-cols{grid-template-columns:1fr;}
+    .concept-col:first-child{border-right:none;border-bottom:1px solid var(--border);}
+  }
+
+  /* Reflection */
+  .reflection-item{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:16px;}
+  .reflection-item .rq-tag{font-family:var(--sans);font-size:11px;font-weight:700;color:var(--accent-dark);background:var(--accent-soft);padding:2px 8px;border-radius:5px;letter-spacing:.03em;}
+  .reflection-item p.prompt{margin:8px 0 12px;font-size:.94rem;font-weight:600;}
+  .policy-note{font-family:var(--sans);font-size:.8rem;color:var(--muted);background:var(--warn-soft);border:1px solid #e7d3a4;border-radius:8px;padding:9px 12px;margin:0 0 18px;}
+  textarea{
+    width:100%;min-height:110px;resize:vertical;font-family:var(--sans);font-size:.9rem;
+    border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);
+    background:#f5efe1;
+  }
+  textarea:focus{outline:2px solid var(--accent);outline-offset:1px;background:var(--card-bg);}
+  .reflection-actions{display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px;}
+  .save-status{font-family:var(--sans);font-size:.76rem;color:var(--muted);}
+  .btn{
+    appearance:none;border:1px solid var(--border);background:var(--card-bg);color:var(--text);
+    font-family:var(--sans);font-size:.82rem;font-weight:600;padding:7px 13px;border-radius:7px;cursor:pointer;
+    transition:background .15s, border-color .15s;
+  }
+  .btn:hover{border-color:var(--accent);color:var(--accent-dark);}
+  .btn.btn-copy[data-copied="true"]{background:var(--success-soft);border-color:#cfdcc0;color:#3d5732;}
+
+  /* Glossary */
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;}
+  .term-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:13px 15px;}
+  .term-card dt{font-weight:700;font-size:.88rem;margin-bottom:4px;color:var(--text);}
+  .term-card dd{margin:0;font-size:.83rem;color:var(--muted);}
+  .glossary-group-title{font-family:var(--sans);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:26px 0 10px;}
+  .glossary-group-title:first-child{margin-top:0;}
+
+  footer.page-footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--border);font-size:.78rem;color:var(--muted);text-align:center;}
+</style>
+</head>
+<body data-module="co-intelligence-mollick">
+<div class="wrap">
+
+  <header class="page-header">
+    <div class="badges">
+      <span class="badge">AI &amp; Work · Human–AI Collaboration</span>
+      <span class="badge muted" id="audience-badge">Undergraduate &amp; Graduate · Business, Education, Information Studies, Computing</span>
+      <span class="badge success">5 Learning Outcomes</span>
+    </div>
+    <h1>Co-Intelligence: Living and Working with AI</h1>
+    <p class="subtitle">A Guided Reading Companion</p>
+    <p class="citation">
+      Ethan Mollick · Portfolio / Penguin, 2024
+    </p>
+
+    <div class="level-picker">
+      <span class="lp-label">Reading Level</span>
+      <div class="level-group" role="group" aria-label="Reading level">
+        <button type="button" class="level-btn" data-level="intro" aria-pressed="false">Intro / High School</button>
+        <button type="button" class="level-btn" data-level="undergrad" aria-pressed="true">Undergrad / Grad</button>
+        <button type="button" class="level-btn" data-level="exec" aria-pressed="false">Executive / Professional</button>
+      </div>
+    </div>
+    <p class="level-caption">Adjusts the overview, learning outcomes, and reflection prompts below — everything else on this page stays the same at every level.</p>
+
+    <div class="overview">
+      <p id="overview-p1"></p>
+      <p id="overview-p2"></p>
+    </div>
+
+    <div class="privacy-note">
+      <span>🔒</span>
+      <span><strong>Your answers stay on this device.</strong> Everything you type in Tab 4 is saved only
+      to your browser's local storage on this page — nothing is sent to a server, an instructor, or any
+      third party unless you explicitly copy and submit it yourself.</span>
+    </div>
+  </header>
+
+  <section class="lo-section">
+    <h2>Learning Outcomes</h2>
+    <p class="lo-sub">By the end of this module, you should be able to:</p>
+    <div class="lo-grid">
+      <div class="lo-card">
+        <span class="lo-tag">LO1</span>
+        <p id="lo1-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO2</span>
+        <p id="lo2-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO3</span>
+        <p id="lo3-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO4</span>
+        <p id="lo4-text"></p>
+      </div>
+      <div class="lo-card">
+        <span class="lo-tag">LO5</span>
+        <p id="lo5-text"></p>
+      </div>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="Module sections">
+    <button class="tab-btn" role="tab" id="tab-btn-1" aria-controls="tab-1" aria-selected="true" tabindex="0">
+      Core Framework<span class="tab-meta">Supports LO1 · LO2</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-2" aria-controls="tab-2" aria-selected="false" tabindex="-1">
+      Rules &amp; Futures<span class="tab-meta">Supports LO4 · LO5</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-3" aria-controls="tab-3" aria-selected="false" tabindex="-1">
+      Close Reading<span class="tab-meta">Supports LO2 · LO3</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-4" aria-controls="tab-4" aria-selected="false" tabindex="-1">
+      Reflection<span class="tab-meta">Supports LO3 · LO5</span>
+    </button>
+    <button class="tab-btn" role="tab" id="tab-btn-5" aria-controls="tab-5" aria-selected="false" tabindex="-1">
+      Glossary<span class="tab-meta">Supports all LOs</span>
+    </button>
+  </nav>
+
+  <!-- TAB 1 : CORE FRAMEWORK -->
+  <section class="panel" id="tab-1" role="tabpanel" aria-labelledby="tab-btn-1" tabindex="0">
+    <h2>Core Framework &amp; Mental Models</h2>
+    <p class="panel-sub">The vocabulary Mollick builds in the book's first part, and the central tension his advice argues from.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>Co-Intelligence</h3>
+        <p>Mollick's term for working <em>with</em> AI as a collaborator rather than treating it as either a
+        replacement or a mere tool. The goal is a partnership in which human judgment and machine
+        capability each cover the other's weak spots.</p>
+      </div>
+      <div class="card">
+        <h3>Alien Mind</h3>
+        <p>Large language models produce human-sounding language, but they are built and trained very
+        differently from a person. Mollick calls them an "alien" kind of intelligence: useful to treat like a
+        person in conversation, but unreliable to assume they share human common sense or motives.</p>
+      </div>
+      <div class="card">
+        <h3>Jagged Frontier</h3>
+        <p>AI's abilities don't form a smooth boundary. It can excel at tasks that seem hard (drafting,
+        summarizing, ideation) and fail at tasks that seem easy, and it's often hard to tell in advance
+        which is which. Knowing where the frontier lies for <em>your</em> work requires testing.</p>
+      </div>
+      <div class="card">
+        <h3>Human in the Loop</h3>
+        <p>Keeping a person responsible for reviewing, correcting, and owning AI output. It guards against
+        confident errors and keeps human skill and accountability in the process.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">The Central Tension: AI as Tool vs. AI as Collaborator</h3>
+    <div class="tension-grid">
+      <div class="tension-col">
+        <h4>The "Software Tool" View</h4>
+        <ul>
+          <li>AI behaves like any program: predictable, repeatable, with a manual that tells you what it does.</li>
+          <li>Skill means learning the correct commands and settings.</li>
+          <li>Errors are bugs that will be patched, so wait until the product is finished.</li>
+          <li>Adoption is a purchasing and training decision made from the top down.</li>
+        </ul>
+      </div>
+      <div class="tension-vs">VS</div>
+      <div class="tension-col">
+        <h4>Mollick's Co-Intelligence View</h4>
+        <ul>
+          <li>AI is general-purpose and unpredictable at the edges, so no manual covers every case.</li>
+          <li>Skill comes from experimenting and building a feel for where it helps and fails.</li>
+          <li>Errors such as hallucination are part of how these systems work, so human review stays essential.</li>
+          <li>The people closest to the work are best placed to discover valuable uses.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:12px;">Five Guiding Themes to Track While You Read</h3>
+    <ul class="theme-list">
+      <li><span class="theme-num">1</span><span><strong>Experience beats theory.</strong> You learn what AI can do for your work by using it on real tasks, not by reading about it.</span></li>
+      <li><span class="theme-num">2</span><span><strong>The frontier is jagged and moves.</strong> Strengths and weaknesses don't line up with human intuition about task difficulty, and they shift as models improve.</span></li>
+      <li><span class="theme-num">3</span><span><strong>Fluent isn't the same as correct.</strong> A model can sound authoritative while being wrong, so verification is part of the workflow.</span></li>
+      <li><span class="theme-num">4</span><span><strong>Delegate by task, not by job.</strong> Jobs are bundles of tasks, and AI changes which tasks are worth doing yourself.</span></li>
+      <li><span class="theme-num">5</span><span><strong>Keep your own skill alive.</strong> Over-reliance can dull the very expertise you need to judge AI's output.</span></li>
+    </ul>
+  </section>
+
+  <!-- TAB 2 : RULES & FUTURES -->
+  <section class="panel" id="tab-2" role="tabpanel" aria-labelledby="tab-btn-2" tabindex="0" hidden>
+    <h2>Four Rules &amp; Four Futures</h2>
+    <p class="panel-sub">Mollick's practical rules for working with AI today, and the scenarios he uses to think about where it goes next — click each to expand the analysis and how to apply it.</p>
+
+    <h3 class="list-heading">Four Rules for Co-Intelligence</h3>
+    <div class="toolkit-list" id="rules-list"></div>
+
+    <h3 class="list-heading">Four Possible Futures</h3>
+    <div class="toolkit-list" id="futures-list"></div>
+  </section>
+
+  <!-- TAB 3 : CLOSE READING -->
+  <section class="panel" id="tab-3" role="tabpanel" aria-labelledby="tab-btn-3" tabindex="0" hidden>
+    <h2>Close Reading &amp; Technical Deep Dive</h2>
+    <p class="panel-sub">A slower, side-by-side pass on the mechanics that make the rest of the advice work.</p>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>1. The Jagged Frontier and "Falling Asleep at the Wheel"</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <p>In a field study Mollick helped run with consultants at Boston Consulting Group, people using
+          AI did notably better on tasks that fell inside AI's current abilities. On a task deliberately
+          chosen to sit outside them, the AI-assisted group did worse than people working without AI,
+          because they trusted a plausible but wrong answer.</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>The lesson is not "AI helps" or "AI hurts" but that the sign of the effect depends on which
+          side of the frontier a task sits. Because the frontier is invisible and uneven, the usual
+          signal people rely on, how hard a task feels to a human, is a poor guide. The failure mode
+          Mollick describes is complacency: when output is fluent and usually good, people stop checking
+          it, and errors slip through exactly where the model is weakest.</p>
+          <p>The practical response is to map the frontier through experiments on your own tasks and to
+          build checks into any workflow that touches the edge.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>2. Sorting Work: Just Me, Delegated, and Automated Tasks — Centaurs and Cyborgs</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <p>Mollick suggests sorting your tasks into three piles. <strong>Just Me tasks</strong> are ones you
+          keep because they matter to your identity, your learning, or your ethics. <strong>Delegated
+          tasks</strong> are ones you hand to AI and then review. <strong>Automated tasks</strong> are ones AI
+          can run with little supervision.</p>
+          <p>He also describes two working styles: <strong>centaurs</strong> draw a clear line between
+          what the human does and what the AI does, while <strong>cyborgs</strong> weave the two together
+          within a single task.</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>The sorting is a risk-and-value decision made per task. A task moves toward automation as
+          errors become cheap to catch and cost little when missed, and toward "Just Me" as the work
+          builds skill you need or carries consequences you can't outsource. Mollick pairs this with the
+          "best available human" standard: compare AI not to the world's top expert but to the person you
+          could realistically get for the job.</p>
+          <p>Centaur and cyborg styles are not ranked. Centaur suits tasks with clean handoffs, such as
+          having AI draft and you finalize; cyborg suits iterative work, such as passing a paragraph back
+          and forth until it reads right.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-head"><h3>3. Why Language Models Sound Right and Still Get Things Wrong</h3></div>
+      <div class="concept-cols">
+        <div class="concept-col">
+          <span class="col-label">In Plain Terms</span>
+          <p>A large language model learns patterns from huge amounts of text and then predicts what words
+          should come next. It is then refined with human feedback so that its answers feel helpful and
+          safe. That recipe produces fluent, confident text, but fluency was never the same thing as
+          checking facts.</p>
+        </div>
+        <div class="concept-col">
+          <span class="col-label">Technical Breakdown</span>
+          <p>Two stages matter here. <strong>Pretraining</strong> builds broad pattern knowledge, including
+          whatever biases and errors exist in the source text. <strong>Reinforcement learning from human
+          feedback (RLHF)</strong> shapes behavior toward answers people rate as good, which can reward
+          sounding helpful as much as being right. Hallucination, meaning a plausible but invented claim,
+          follows from a system that generates likely text rather than retrieving verified facts.</p>
+          <p>Mollick ties this to the alignment problem: getting a system's behavior to match human
+          goals is hard even when it appears to be working. It is also why he says to treat the AI like a
+          person in how you talk to it, while remembering it is not one in how it fails.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4 : REFLECTION -->
+  <section class="panel" id="tab-4" role="tabpanel" aria-labelledby="tab-btn-4" tabindex="0" hidden>
+    <h2>Reflection &amp; Synthesis Exercises</h2>
+    <p class="panel-sub">Test the ideas on your own tasks. Your answers autosave to this browser as you type.</p>
+    <p class="policy-note"><strong>Before you experiment:</strong> follow your school's or employer's AI and data policies, and don't paste confidential, private, or graded-assignment material into an AI tool unless you're allowed to.</p>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 1 · Supports LO1 · LO3</span>
+      <p class="prompt" id="prompt1"></p>
+      <textarea data-key="reflect1" aria-label="Reflection 1 response" placeholder="e.g., Just Me: writing my reflection papers. Delegated: first-pass study guides. Automated: reformatting citations. Likely outside the frontier: anything needing exact quotes..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect1">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect1"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 2 · Supports LO2</span>
+      <p class="prompt" id="prompt2"></p>
+      <textarea data-key="reflect2" aria-label="Reflection 2 response" placeholder="e.g., I asked about a topic I know well. It got the overview right but invented a citation. That fits a model generating likely text rather than checking sources..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect2">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect2"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 3 · Supports LO4</span>
+      <p class="prompt" id="prompt3"></p>
+      <textarea data-key="reflect3" aria-label="Reflection 3 response" placeholder="Rule 1 (invite AI): ... Rule 2 (human in the loop): ... Rule 3 (treat like a person, set the persona): ... Rule 4 (worst AI you'll use): ..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect3">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect3"></span>
+      </div>
+    </div>
+
+    <div class="reflection-item">
+      <span class="rq-tag">Exercise 4 · Supports LO5</span>
+      <p class="prompt" id="prompt4"></p>
+      <textarea data-key="reflect4" aria-label="Reflection 4 response" placeholder="e.g., Use AI to brainstorm and outline; I write and fact-check every claim; I'll re-test the tasks it failed at in three months..."></textarea>
+      <div class="reflection-actions">
+        <button class="btn btn-copy" data-target="reflect4">Copy to Clipboard for LMS / Discussion</button>
+        <span class="save-status" data-status-for="reflect4"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 5 : GLOSSARY -->
+  <section class="panel" id="tab-5" role="tabpanel" aria-labelledby="tab-btn-5" tabindex="0" hidden>
+    <h2>Reference &amp; Glossary</h2>
+    <p class="panel-sub">Core terms, plus the working styles and task categories Mollick uses.</p>
+
+    <div class="glossary-group-title">Core Vocabulary</div>
+    <div class="glossary-grid">
+      <div class="term-card"><dt>Co-Intelligence</dt><dd>Working with AI as a collaborator so that human judgment and machine capability cover each other's weaknesses.</dd></div>
+      <div class="term-card"><dt>Alien Mind</dt><dd>Mollick's description of AI as an intelligence that sounds human but is built and fails very differently from a person.</dd></div>
+      <div class="term-card"><dt>Large Language Model (LLM)</dt><dd>An AI system trained on large amounts of text to predict and generate language, the technology behind modern chatbots.</dd></div>
+      <div class="term-card"><dt>Pretraining</dt><dd>The first training stage, in which a model learns broad patterns from vast text, including the biases and errors in that text.</dd></div>
+      <div class="term-card"><dt>RLHF</dt><dd>Reinforcement learning from human feedback: a refinement stage that steers a model toward answers people rate as helpful and safe.</dd></div>
+      <div class="term-card"><dt>Hallucination</dt><dd>A fluent, confident output that is false or invented, arising because the model generates likely text rather than verified facts.</dd></div>
+      <div class="term-card"><dt>Alignment</dt><dd>The challenge of getting an AI system's behavior to match human goals and values, even in situations its designers didn't anticipate.</dd></div>
+      <div class="term-card"><dt>Jagged Frontier</dt><dd>The uneven boundary of AI's abilities: strong at some hard-seeming tasks, weak at some easy-seeming ones, and hard to predict in advance.</dd></div>
+    </div>
+
+    <div class="glossary-group-title">Working With AI</div>
+    <div class="glossary-grid">
+      <div class="term-card"><dt>Human in the Loop</dt><dd>Keeping a person responsible for reviewing, correcting, and owning AI output.</dd></div>
+      <div class="term-card"><dt>Centaur</dt><dd>A work style with a clear division of labor: the human and the AI each take the tasks they're best at.</dd></div>
+      <div class="term-card"><dt>Cyborg</dt><dd>A work style that intertwines human and AI effort within a single task, passing work back and forth.</dd></div>
+      <div class="term-card"><dt>Best Available Human</dt><dd>A comparison standard: judge AI against the person you could realistically get for the task, not the world's top expert.</dd></div>
+      <div class="term-card"><dt>Just Me Tasks</dt><dd>Tasks you keep for yourself because they build your skill, express your identity, or carry ethical weight.</dd></div>
+      <div class="term-card"><dt>Delegated Tasks</dt><dd>Tasks you hand to AI and then review, keeping responsibility for the result.</dd></div>
+      <div class="term-card"><dt>Automated Tasks</dt><dd>Tasks AI can run end to end with little supervision because errors are cheap to catch and cost little if missed.</dd></div>
+      <div class="term-card"><dt>Falling Asleep at the Wheel</dt><dd>Mollick's image for complacency: trusting good-enough AI output so much that you stop checking it, and miss errors where it is weakest.</dd></div>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    Guided Reading Companion · <em>Co-Intelligence</em>, Ethan Mollick (Portfolio / Penguin, 2024) · Answers stored locally in your browser only.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var moduleSlug = document.body.getAttribute("data-module");
+
+  /* ---------- Reading level content ---------- */
+  var levelContent = {
+    intro: {
+      audienceBadge: "Intro / High School · Using AI Wisely",
+      overviewP1: "<em>Co-Intelligence</em> is a book about learning to work with AI chatbots instead of just fearing them or blindly trusting them. Ethan Mollick, a professor who studies how people use AI, explains that these systems can write, brainstorm, and explain things surprisingly well, but they can also make things up while sounding totally sure. His big idea is to treat AI like a very capable, very strange helper: try it out, keep your own judgment switched on, and don't hand over the thinking you need to learn.",
+      overviewP2: "This page is a study guide to use next to the book. Tab 1 introduces the key ideas. Tab 2 walks through Mollick's four rules and four possible futures. Tab 3 looks closer at three important ideas. Tab 4 has you test the ideas on your own tasks, and Tab 5 is a glossary you can check any time.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> what terms like \"alien mind,\" \"jagged frontier,\" and \"human in the loop\" mean, using examples from your own life.",
+      lo2: "<span class=\"lo-verb\">Trace</span> why an AI chatbot can sound confident and still be wrong, starting from how it was trained.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> tasks you'd do yourself, tasks you'd let AI help with and then check, and tasks you wouldn't trust AI on.",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> a real way of using AI by asking whether it follows Mollick's four rules.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> a simple plan for using AI in your own work that keeps you in charge of the thinking.",
+      prompt1: "Think about three things you do for school or a hobby. Which would you always do yourself, which could AI help with if you checked its work, and which would you not trust AI to do? Why?",
+      prompt2: "Ask an AI tool a question about something you know really well (if your school allows it). Did it get anything wrong or make something up? What might explain how it could sound so sure?",
+      prompt3: "Think of a way you or someone you know has used AI. Which of Mollick's four rules did it follow, and which did it skip? Explain with an example.",
+      prompt4: "Write a short plan for how you'll use AI over the next month. What will you use it for, what will you always do yourself, and how will you double-check what it gives you?"
+    },
+    undergrad: {
+      audienceBadge: "Undergraduate &amp; Graduate · Business, Education, Information Studies, Computing",
+      overviewP1: "<em>Co-Intelligence</em> is Ethan Mollick's practical argument that generative AI is a general-purpose technology best understood by using it, not by waiting for a finished manual. A Wharton professor who studies innovation and work, Mollick describes language models as an \"alien\" intelligence: fluent and often impressive, but uneven in ways that human intuition does not predict. He pairs that diagnosis with four rules for working alongside AI, and with four scenarios for where the technology may head.",
+      overviewP2: "This module works alongside the book, not in place of it. Tab 1 introduces the vocabulary and the central tension between AI-as-tool and AI-as-collaborator. Tab 2 walks the four rules and four futures as interactive lists. Tab 3 does a closer read of the jagged frontier, task sorting, and why fluent models still err. Tab 4 asks you to run small experiments on your own tasks, and Tab 5 is a standing glossary. Work through the tabs in order the first time.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the core vocabulary — alien mind, jagged frontier, centaur and cyborg work, human in the loop, alignment — from a plain-language description of a real AI use.",
+      lo2: "<span class=\"lo-verb\">Trace</span> how pretraining and human-feedback tuning produce both the strengths of language models and failure modes such as hallucination.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> Just Me, Delegated, and Automated tasks, and tasks inside the jagged frontier from tasks outside it, in a real workflow.",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> a real AI use against Mollick's four rules, naming which it honors and which it neglects.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> a personal or organizational AI-use plan with explicit human checkpoints and a schedule for re-testing.",
+      prompt1: "List the main tasks in a typical week of your study or work. Sort each into Just Me, Delegated, or Automated, and mark which you suspect fall inside or outside the jagged frontier. What reasoning drove the hardest calls?",
+      prompt2: "Run a small experiment: give an AI tool a task in an area you know well and check its output closely. Describe what it got right and wrong, and explain the result using what you know about pretraining and RLHF.",
+      prompt3: "Pick a real use of AI (yours, a classmate's, or a published example) and assess it against each of Mollick's four rules. Where is it strong, where is it weak, and what would you change?",
+      prompt4: "Draft an AI-use plan for a project or course: which tasks you'll delegate, which you'll keep, where a human checkpoint is mandatory, and which failed tasks you'll re-test later under the \"worst AI you'll ever use\" rule."
+    },
+    exec: {
+      audienceBadge: "Executive / Professional · Strategy, Operations &amp; Workforce Change",
+      overviewP1: "<em>Co-Intelligence</em> is Ethan Mollick's field guide for leaders and practitioners deciding how to bring generative AI into real work. His central claim is that AI's capabilities are uneven and hard to predict, so the way to find value is structured experimentation by the people who know the work best, paired with firm human accountability for results. The book moves from how these systems work, to rules of thumb for using them, to scenarios for how far they might go.",
+      overviewP2: "Use this page as a working reference alongside the book. Tab 1 gives you the vocabulary to discuss AI capability and risk precisely. Tab 2 is the highest-value tab for practitioners: four rules you can turn into team practice, and four scenarios to stress-test strategy against. Tab 3 backs that up with the jagged-frontier evidence, task-sorting logic, and why fluent output can mislead; Tab 4 is where you apply it to a workflow you actually own.",
+      lo1: "<span class=\"lo-verb\">Reconstruct</span> the jagged frontier, centaur/cyborg, and human-in-the-loop concepts well enough to brief a team on where AI fits their work.",
+      lo2: "<span class=\"lo-verb\">Trace</span> how model training produces hallucination and bias, and what that implies for review and risk controls in your processes.",
+      lo3: "<span class=\"lo-verb\">Distinguish</span> tasks to keep human, delegate with review, or automate in a workflow you own, using error cost and skill value as criteria.",
+      lo4: "<span class=\"lo-verb\">Evaluate</span> an existing or proposed AI initiative against Mollick's four rules and identify the gap most likely to cause harm.",
+      lo5: "<span class=\"lo-verb\">Formulate</span> an AI adoption plan for a team or function with named checkpoints, an experimentation cadence, and a re-testing schedule.",
+      prompt1: "Take a typical week of work for your team and sort its tasks into Just Me, Delegated, and Automated. Mark which you believe sit inside or outside the jagged frontier, and state the evidence or reasoning behind your riskiest assumption.",
+      prompt2: "Run a controlled test on a work-safe task in your domain (no confidential data) and audit the output for errors. What failed, how would you have caught it in a real workflow, and what does the failure imply about review requirements?",
+      prompt3: "Select an AI initiative in your organization, real or proposed, and assess it against Mollick's four rules. Which gap is most likely to cause harm, and what is the cheapest fix?",
+      prompt4: "Draft a one-page adoption plan for a team: tasks to delegate or automate, mandatory human checkpoints, who is accountable for errors, how you'll run experiments, and when you'll re-test tasks that currently fail."
+    }
+  };
+
+  var levelStorageKey = moduleSlug + "_readingLevel";
+  var levelBtns = Array.prototype.slice.call(document.querySelectorAll(".level-btn"));
+
+  function applyLevel(level){
+    var c = levelContent[level] || levelContent.undergrad;
+    var setHTML = function(id, html){ var el = document.getElementById(id); if(el){ el.innerHTML = html; } };
+
+    setHTML("audience-badge", c.audienceBadge);
+    setHTML("overview-p1", c.overviewP1);
+    setHTML("overview-p2", c.overviewP2);
+    setHTML("lo1-text", c.lo1);
+    setHTML("lo2-text", c.lo2);
+    setHTML("lo3-text", c.lo3);
+    setHTML("lo4-text", c.lo4);
+    setHTML("lo5-text", c.lo5);
+    setHTML("prompt1", c.prompt1);
+    setHTML("prompt2", c.prompt2);
+    setHTML("prompt3", c.prompt3);
+    setHTML("prompt4", c.prompt4);
+
+    levelBtns.forEach(function(btn){
+      btn.setAttribute("aria-pressed", btn.getAttribute("data-level") === level ? "true" : "false");
+    });
+  }
+
+  levelBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var level = btn.getAttribute("data-level");
+      applyLevel(level);
+      try { window.localStorage.setItem(levelStorageKey, level); } catch(e){}
+    });
+  });
+
+  var savedLevel = "undergrad";
+  try { savedLevel = window.localStorage.getItem(levelStorageKey) || "undergrad"; } catch(e){}
+  applyLevel(savedLevel);
+
+  /* ---------- Tabs ---------- */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  var panels = Array.prototype.slice.call(document.querySelectorAll('[role="tabpanel"]'));
+
+  function selectTab(tab){
+    tabs.forEach(function(t){
+      var selected = t === tab;
+      t.setAttribute("aria-selected", selected ? "true" : "false");
+      t.tabIndex = selected ? 0 : -1;
+    });
+    panels.forEach(function(p){
+      p.hidden = p.id !== tab.getAttribute("aria-controls");
+    });
+  }
+
+  tabs.forEach(function(tab, i){
+    tab.addEventListener("click", function(){ selectTab(tab); });
+    tab.addEventListener("keydown", function(e){
+      var idx = i;
+      if(e.key === "ArrowRight"){ idx = (i + 1) % tabs.length; }
+      else if(e.key === "ArrowLeft"){ idx = (i - 1 + tabs.length) % tabs.length; }
+      else if(e.key === "Home"){ idx = 0; }
+      else if(e.key === "End"){ idx = tabs.length - 1; }
+      else { return; }
+      e.preventDefault();
+      tabs[idx].focus();
+      selectTab(tabs[idx]);
+    });
+  });
+
+  /* ---------- localStorage autosave ---------- */
+  function storageKey(fieldKey){ return moduleSlug + "_" + fieldKey; }
+
+  var fields = Array.prototype.slice.call(document.querySelectorAll("[data-key]"));
+  fields.forEach(function(field){
+    var key = field.getAttribute("data-key");
+    try {
+      var saved = window.localStorage.getItem(storageKey(key));
+      if(saved !== null){ field.value = saved; }
+    } catch(e){}
+
+    var statusEl = document.querySelector('[data-status-for="' + key + '"]');
+    var timer = null;
+
+    field.addEventListener("input", function(){
+      try { window.localStorage.setItem(storageKey(key), field.value); } catch(e){}
+      if(statusEl){
+        statusEl.textContent = "Saved just now";
+        clearTimeout(timer);
+        timer = setTimeout(function(){ statusEl.textContent = ""; }, 1800);
+      }
+    });
+  });
+
+  /* ---------- Copy to clipboard ---------- */
+  var copyBtns = Array.prototype.slice.call(document.querySelectorAll(".btn-copy"));
+  copyBtns.forEach(function(btn){
+    var targetKey = btn.getAttribute("data-target");
+    var targetEl = document.querySelector('[data-key="' + targetKey + '"]');
+    var originalLabel = btn.textContent;
+
+    btn.addEventListener("click", function(){
+      var text = targetEl ? targetEl.value : "";
+      var done = function(){
+        btn.textContent = "Copied!";
+        btn.setAttribute("data-copied", "true");
+        setTimeout(function(){
+          btn.textContent = originalLabel;
+          btn.removeAttribute("data-copied");
+        }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, done);
+      } else {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); } catch(e){}
+        document.body.removeChild(ta);
+        done();
+      }
+    });
+  });
+
+  /* ---------- Expandable lists (Tab 2) ---------- */
+  var rules = [
+    {badge:"1", tier:"foundation", stage:"Engage", title:"Always Invite AI to the Table", sub:"learn the frontier by using it",
+      analysis:"Because AI's strengths and weaknesses are uneven and hard to predict, the only reliable way to learn where it helps in your own work is to try it on many real tasks. Mollick notes that your own expertise lets you judge the results quickly, which makes experts well placed to find good uses.",
+      apply:"For a few weeks, try AI on tasks you'd normally do unaided and keep a short log of what worked, what failed, and why. Check your school's or employer's policies first, and keep confidential material out of it."},
+    {badge:"2", tier:"diagnosis", stage:"Judgment", title:"Be the Human in the Loop", sub:"you stay responsible for the result",
+      analysis:"AI can produce confident errors, and people tend to relax their guard when output is usually good. Keeping a human accountable preserves quality and also keeps your own skill in use, which you need in order to spot mistakes.",
+      apply:"Treat AI output as a draft. Verify facts and sources, decide which steps always need a person, and keep doing enough of the work yourself that your judgment doesn't fade."},
+    {badge:"3", tier:"diagnosis", stage:"Technique", title:"Treat AI Like a Person (but Tell It What Kind of Person)", sub:"use the persona, remember it isn't one",
+      analysis:"Talking to a model as you would to a collaborator tends to get better results than issuing terse commands, and giving it a role, an audience, and constraints shapes its output. Mollick is clear that this is a practical interface, not a claim that the system thinks or feels like a person.",
+      apply:"Give the model a role, a goal, and an audience, then iterate in conversation and ask it to critique its own draft. Keep in mind it can be wrong in ways a person wouldn't be."},
+    {badge:"4", tier:"testing", stage:"Adapt", title:"Assume This Is the Worst AI You Will Ever Use", sub:"today's limits are a snapshot",
+      analysis:"Capabilities have been improving quickly, so a failure today may not be a failure next year. Planning around current limits as if they were permanent risks building habits and strategies that age badly.",
+      apply:"Re-test tasks that failed every few months, and design workflows so a better model can slot in without rebuilding everything."}
+  ];
+
+  var futures = [
+    {badge:"A", tier:"foundation", stage:"Scenario", title:"As Good As It Gets", sub:"progress stalls near today's level",
+      analysis:"In this scenario AI stops improving much beyond current systems. Even then, Mollick argues, existing tools are already capable enough to change many jobs, education, and creative work as people learn to use them.",
+      apply:"Ask what would change in your field if nothing improved from here, and which tasks you'd already want to redesign around today's tools."},
+    {badge:"B", tier:"diagnosis", stage:"Scenario", title:"Slow Growth", sub:"steady, modest improvement",
+      analysis:"Here AI keeps getting better, but gradually. Organizations and institutions have time to adapt, though the gap between early and late adopters can still widen.",
+      apply:"Ask how you'd build skills and processes incrementally, and what would signal that it's time to move faster."},
+    {badge:"C", tier:"testing", stage:"Scenario", title:"Exponential Growth", sub:"rapid, compounding improvement",
+      analysis:"In this scenario capability gains continue quickly, putting pressure on jobs, education, and institutions faster than they can comfortably adjust. Mollick treats this as plausible enough to plan for rather than dismiss.",
+      apply:"Ask which of your skills and processes would be most exposed to fast change, and what flexibility you'd want to build in now."},
+    {badge:"D", tier:"testing", stage:"Scenario", title:"The Machine God", sub:"machines surpass human intelligence",
+      analysis:"This scenario imagines AI reaching or exceeding general human intelligence, raising questions about control, alignment, and risk that go far beyond workplace productivity. Mollick presents it as the most uncertain and contested of the four.",
+      apply:"Use it as a prompt to think about alignment and governance: who decides how such systems are built and used, and what safeguards you'd want to see."}
+  ];
+
+  function renderList(containerId, items, prefix){
+    var listEl = document.getElementById(containerId);
+    var frag = document.createDocumentFragment();
+
+    items.forEach(function(item, idx){
+      var el = document.createElement("div");
+      el.className = "toolkit-item";
+      el.setAttribute("data-open", "false");
+
+      var bodyId = prefix + "-body-" + idx;
+
+      var toggle = document.createElement("button");
+      toggle.className = "toolkit-toggle";
+      toggle.type = "button";
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-controls", bodyId);
+      toggle.innerHTML =
+        '<span class="toolkit-rank">' + item.badge + '</span>' +
+        '<span class="lt-title">' + item.title + ' <span style="font-weight:400;color:var(--muted);">— ' + item.sub + '</span>' +
+        '<span class="toolkit-stage stage-' + item.tier + '">' + item.stage + '</span></span>' +
+        '<span class="lt-icon">▼</span>';
+
+      var body = document.createElement("div");
+      body.className = "toolkit-body";
+      body.id = bodyId;
+      body.hidden = true;
+      body.innerHTML =
+        '<p><span class="lb-label">Analysis</span>' + item.analysis + '</p>' +
+        '<p><span class="lb-label">How to Apply It</span>' + item.apply + '</p>';
+
+      toggle.addEventListener("click", function(){
+        var isOpen = el.getAttribute("data-open") === "true";
+        el.setAttribute("data-open", isOpen ? "false" : "true");
+        toggle.setAttribute("aria-expanded", isOpen ? "false" : "true");
+        body.hidden = isOpen;
+      });
+
+      el.appendChild(toggle);
+      el.appendChild(body);
+      frag.appendChild(el);
+    });
+
+    listEl.appendChild(frag);
+  }
+
+  renderList("rules-list", rules, "rule");
+  renderList("futures-list", futures, "future");
+})();
+</script>
+</body>
+</html>
